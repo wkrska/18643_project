@@ -33,40 +33,26 @@
  * implied, of the FreeBSD Project.
  ****************************************************************/
 
+#include "hash0_helper.h"
+#include "hash1_helper.h"
 #include "vadd_helper.h"
+
 #define VADD_DIM 4096
-
-#include "mmm_helper.h"
-#define MMM_DIM 128
-
-#define EXP_DIM 4096
-#define EXP2_DIM 4096
-#define MATMUL_DIM 640
-//#define EXP2_DIM 128
-
-#include "exp1_helper.h"
-#include "exp2_helper.h"
-#include "exp3_helper.h"
-
 
 int main(int argc, char* argv[]) {
 
 	// Hard coding xclbin filenames, ignoring command line arguments
-  std::string xclbinFilename[7] = {
+  std::string xclbinFilename[3] = {
     "binary_container_vadd.xclbin",
-    "binary_container_mmm.xclbin",
-    "binary_container_exp1a.xclbin",
-    "binary_container_exp1b.xclbin",
-    "binary_container_exp2a.xclbin",
-    "binary_container_exp2b.xclbin",
-    "binary_container_exp3.xclbin"
+    "binary_container_hash0.xclbin",
+    "binary_container_hash1.xclbin",
   };
 
   cl_object cl_obj;
 
   initialize_device(cl_obj);
 
-#if 0
+#if 1
     {
         // Read vadd
         read_xclbin(xclbinFilename[0], cl_obj.bins);
@@ -88,9 +74,9 @@ int main(int argc, char* argv[]) {
     }
 #endif
 
-#if 1
+#if 0
     {
-        // Read mmm
+        // hash0
         read_xclbin(xclbinFilename[1], cl_obj.bins);
 
         krnl_object mmm_obj;
@@ -114,10 +100,11 @@ int main(int argc, char* argv[]) {
     }
 #endif
 
-#if 1
-    // Exp 1a
+#if 0
+
     {
-        read_xclbin(xclbinFilename[2], cl_obj.bins);
+    	// hash1
+    	read_xclbin(xclbinFilename[2], cl_obj.bins);
 
         krnl_object exp1a_obj;
         exp1a_obj.index = 1;
@@ -134,82 +121,3 @@ int main(int argc, char* argv[]) {
         std::cout << "exp1a completed\n\n";
     }
 #endif
-
-#if 1
-
-    // Exp 1b
-    {
-        read_xclbin(xclbinFilename[3], cl_obj.bins);
-
-        krnl_object exp1b_obj;
-        exp1b_obj.index = 2; // 3;
-        exp1b_obj.name = "krnl_exp1b";
-
-        int *ptr_in, *ptr_out;
-
-        program_kernel(cl_obj, exp1b_obj);
-        exp1_allocate_mem(cl_obj, exp1b_obj, &ptr_in, &ptr_out, EXP_DIM * EXP_DIM * sizeof(int));
-        initialize_memory_int(ptr_in, EXP_DIM * EXP_DIM);
-        initialize_memory_int(ptr_out, 1);
-        exp1_run_kernel(cl_obj, exp1b_obj);
-        exp1_deallocate_mem(cl_obj, exp1b_obj, ptr_in, ptr_out);
-        std::cout << "exp1b completed\n\n";
-    }
-#endif
-
-#if 1
-    // Exp 2a
-    {
-        read_xclbin(xclbinFilename[4], cl_obj.bins);
-
-        krnl_object exp2a_obj;
-        exp2a_obj.index = 3;
-        exp2a_obj.name = "krnl_exp2a";
-
-        int *ptr_result;
-
-        program_kernel(cl_obj, exp2a_obj);
-        exp2_allocate_mem(cl_obj, exp2a_obj, &ptr_result, EXP2_DIM * EXP2_DIM * sizeof(int));
-        exp2_run_kernel(cl_obj, exp2a_obj);
-        exp2_deallocate_mem(cl_obj, exp2a_obj, ptr_result);
-    }
-#endif
-
-#if 1
-    // Exp 2b
-    {
-        read_xclbin(xclbinFilename[5], cl_obj.bins);
-
-        krnl_object exp2b_obj;
-        exp2b_obj.index = 4;
-        exp2b_obj.name = "krnl_exp2b";
-
-        int *ptr_result;
-
-        program_kernel(cl_obj, exp2b_obj);
-        exp2_allocate_mem(cl_obj, exp2b_obj, &ptr_result, EXP2_DIM * EXP2_DIM * sizeof(int));
-        exp2_run_kernel(cl_obj, exp2b_obj);
-        exp2_deallocate_mem(cl_obj, exp2b_obj, ptr_result);
-    }
-#endif
-
-#if 1
-    // Exp 3
-    {
-        read_xclbin(xclbinFilename[6], cl_obj.bins);
-
-        krnl_object exp3_obj;
-        exp3_obj.index = 5;
-        exp3_obj.name = "krnl_exp3";
-
-        int *ptr_in, *ptr_out;
-
-        program_kernel(cl_obj, exp3_obj);
-        exp3_allocate_mem(cl_obj, exp3_obj, &ptr_in, &ptr_out, EXP_DIM * EXP_DIM * sizeof(int));
-        initialize_memory_int(ptr_in, EXP_DIM * EXP_DIM);
-        initialize_memory_int(ptr_out, 1); 
-        exp3_run_kernel(cl_obj, exp3_obj);
-        exp3_deallocate_mem(cl_obj, exp3_obj, ptr_in, ptr_out);
-    }
-#endif
-}

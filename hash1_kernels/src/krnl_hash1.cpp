@@ -10,7 +10,7 @@
 //#define DATA_DIM 128
 
 extern "C" {
-void krnl_exp1a(const int *in,        // Read-Only Matrix
+void krnl_hash1(const int *in,        // Read-Only Matrix
                 int *out) {
   int num00 = 852129405;
   int num01 = 1297230771;
