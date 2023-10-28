@@ -38,10 +38,11 @@
 #include "vadd_helper.h"
 
 #define VADD_DIM 4096
+#define N 32 // number of key-value pairs per cycle
+#define G 64 // number of unique keys
 
 int main(int argc, char* argv[]) {
 
-	// Hard coding xclbin filenames, ignoring command line arguments
   std::string xclbinFilename[3] = {
     "binary_container_vadd.xclbin",
     "binary_container_hash0.xclbin",
@@ -80,8 +81,8 @@ int main(int argc, char* argv[]) {
         read_xclbin(xclbinFilename[1], cl_obj.bins);
 
         krnl_object mmm_obj;
-        mmm_obj.index = 0;
-        mmm_obj.name = "krnl_mmm";
+        mmm_obj.index = 1;
+        mmm_obj.name = "krnl_hash0";
 
         float *ptr_a, *ptr_b, *ptr_result;
 
