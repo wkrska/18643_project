@@ -17,6 +17,7 @@ void print_table_data(table_data_t t) {
     }
     printf("\n");
   }
+  printf("\n");
 }
 
 table_data_t parse_table_file(char *filename, int xdim, int ydim) {
@@ -52,8 +53,14 @@ int main(int argc, char *argv[])
   int t1_xdim = strtol(argv[2], nullptr, 0);
   int t1_ydim = strtol(argv[3], nullptr, 0);
   table_data_t t1_data = parse_table_file(argv[1], t1_xdim, t1_ydim);
+  std::cout << "TABLE 1" << std::endl;
   print_table_data(t1_data);
 
+  int t2_xdim = strtol(argv[5], nullptr, 0);
+  int t2_ydim = strtol(argv[6], nullptr, 0);
+  table_data_t t2_data = parse_table_file(argv[4], t2_xdim, t2_ydim);
+  std::cout << "TABLE 2" << std::endl;
+  print_table_data(t2_data);
 //  char **t1_arr = 
 
   //std::cout << "argc == " << argc << '\n';
