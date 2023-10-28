@@ -5,14 +5,33 @@
 #include <stdlib.h>
 
 struct table_data_t {
-  char *arr;
+  int *arr;
   int xdim;
   int ydim;
 };
 
+void print_table_data(table_data_t t) {
+  for (int i = 0; i < t.ydim; i++) {
+    for (int j = 0; j < t.xdim; j++) {
+      printf("%3d ", t.arr[i * t.xdim + j]);
+    }
+    printf("\n");
+  }
+}
+
 table_data_t parse_table_file(char *filename, int xdim, int ydim) {
   std::cout << filename << " xdim: " << xdim << ", ydim: " << ydim << std::endl;
-  char *arr = (char *) malloc(xdim * ydim * sizeof(char));
+  int *arr = (int *) malloc(xdim * ydim * sizeof(int));
+  std::fstream fileStream;
+  fileStream.open(filename);
+  int holder;
+  for (int i = 0; i < ydim; i++) {
+    for (int j = 0; j < xdim; j++) {
+      fileStream >> holder;
+      arr[i * xdim + j] = holder;
+    }
+  }
+  fileStream.close();
 
   table_data_t table;
   table.arr = arr;
@@ -33,6 +52,7 @@ int main(int argc, char *argv[])
   int t1_xdim = strtol(argv[2], nullptr, 0);
   int t1_ydim = strtol(argv[3], nullptr, 0);
   table_data_t t1_data = parse_table_file(argv[1], t1_xdim, t1_ydim);
+  print_table_data(t1_data);
 
 //  char **t1_arr = 
 
