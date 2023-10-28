@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+    	
+    <storageModule moduleId="org.eclipse.cdt.core.settings">
+        		
+        <cconfiguration id="com.xilinx.ide.accel.config.hwkernel.sw_emu.473148219">
+            			
+            <storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.xilinx.ide.accel.config.hwkernel.sw_emu.473148219" moduleId="org.eclipse.cdt.core.settings" name="Emulation-SW">
+                				
+                <externalSettings/>
+                				
+                <extensions>
+                    					
+                    <extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+                    					
+                    <extension id="com.xilinx.ide.accel.VppErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+                    					
+                    <extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+                    				
+                </extensions>
+                			
+            </storageModule>
+            			
+            <storageModule moduleId="cdtBuildSystem" version="4.0.0">
+                				
+                <configuration buildProperties="" description="" id="com.xilinx.ide.accel.config.hwkernel.sw_emu.473148219" name="Emulation-SW" parent="com.xilinx.ide.accel.config.hwkernel.sw_emu">
+                    					
+                    <folderInfo id="com.xilinx.ide.accel.config.hwkernel.sw_emu.473148219." name="/" resourcePath="">
+                        						
+                        <toolChain id="com.xilinx.ide.accel.toolchain.hwKernelCompiler.sw_emu.1325565958" name="Hardware Kernel Compiler" superClass="com.xilinx.ide.accel.toolchain.hwKernelCompiler.sw_emu">
+                            							
+                            <targetPlatform id="com.xilinx.ide.accel.config.hwkernel.sw_emu.473148219..1051742463" name=""/>
+                            							
+                            <builder buildPath="${workspace_loc:/hash0_kernels}/Emulation-SW" enableAutoBuild="true" id="com.xilinx.ide.accel.builder.kernel.1294842561" managedBuildOn="true" name="Kernel Project Builder.Emulation-SW" superClass="com.xilinx.ide.accel.builder.kernel"/>
+                            							
+                            <tool id="com.xilinx.ide.accel.tool.hwKernelCompiler.1945633463" name="V++ Kernel Compiler" superClass="com.xilinx.ide.accel.tool.hwKernelCompiler">
+                                								
+                                <inputType id="com.xilinx.accelerated.toolchain.hw_compiler.input.cl.1099355937" name="OpenCL files" superClass="com.xilinx.accelerated.toolchain.hw_compiler.input.cl"/>
+                                							
+                            </tool>
+                            						
+                        </toolChain>
+                        					
+                    </folderInfo>
+                    				
+                </configuration>
+                			
+            </storageModule>
+            			
+            <storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+            		
+        </cconfiguration>
+        		
+        <cconfiguration id="com.xilinx.ide.accel.config.hwkernel.hw_emu.597227687">
+            			
+            <storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.xilinx.ide.accel.config.hwkernel.hw_emu.597227687" moduleId="org.eclipse.cdt.core.settings" name="Emulation-HW">
+                				
+                <externalSettings/>
+                				
+                <extensions>
+                    					
+                    <extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+                    					
+                    <extension id="com.xilinx.ide.accel.VppErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+                    					
+                    <extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+                    				
+                </extensions>
+                			
+            </storageModule>
+            			
+            <storageModule moduleId="cdtBuildSystem" version="4.0.0">
+                				
+                <configuration buildProperties="" description="" id="com.xilinx.ide.accel.config.hwkernel.hw_emu.597227687" name="Emulation-HW" parent="com.xilinx.ide.accel.config.hwkernel.hw_emu">
+                    					
+                    <folderInfo id="com.xilinx.ide.accel.config.hwkernel.hw_emu.597227687." name="/" resourcePath="">
+                        						
+                        <toolChain id="com.xilinx.ide.accel.toolchain.hwKernelCompiler.hw_emu.1394844158" name="Hardware Kernel Compiler" superClass="com.xilinx.ide.accel.toolchain.hwKernelCompiler.hw_emu">
+                            							
+                            <targetPlatform id="com.xilinx.ide.accel.config.hwkernel.hw_emu.597227687..510513732" name=""/>
+                            							
+                            <builder buildPath="${workspace_loc:/hash0_kernels}/Emulation-HW" enableAutoBuild="true" id="com.xilinx.ide.accel.builder.kernel.726477119" managedBuildOn="true" name="Kernel Project Builder.Emulation-HW" superClass="com.xilinx.ide.accel.builder.kernel"/>
+                            							
+                            <tool id="com.xilinx.ide.accel.tool.hwKernelCompiler.1763619889" name="V++ Kernel Compiler" superClass="com.xilinx.ide.accel.tool.hwKernelCompiler">
+                                								
+                                <inputType id="com.xilinx.accelerated.toolchain.hw_compiler.input.cl.628586709" name="OpenCL files" superClass="com.xilinx.accelerated.toolchain.hw_compiler.input.cl"/>
+                                							
+                            </tool>
+                            						
+                        </toolChain>
+                        					
+                    </folderInfo>
+                    				
+                </configuration>
+                			
+            </storageModule>
+            			
+            <storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+            		
+        </cconfiguration>
+        		
+        <cconfiguration id="com.xilinx.ide.accel.config.hwkernel.hw.527460096">
+            			
+            <storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.xilinx.ide.accel.config.hwkernel.hw.527460096" moduleId="org.eclipse.cdt.core.settings" name="Hardware">
+                				
+                <externalSettings/>
+                				
+                <extensions>
+                    					
+                    <extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+                    					
+                    <extension id="com.xilinx.ide.accel.VppErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+                    					
+                    <extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+                    				
+                </extensions>
+                			
+            </storageModule>
+            			
+            <storageModule moduleId="cdtBuildSystem" version="4.0.0">
+                				
+                <configuration buildProperties="" description="" id="com.xilinx.ide.accel.config.hwkernel.hw.527460096" name="Hardware" parent="com.xilinx.ide.accel.config.hwkernel.hw">
+                    					
+                    <folderInfo id="com.xilinx.ide.accel.config.hwkernel.hw.527460096." name="/" resourcePath="">
+                        						
+                        <toolChain id="com.xilinx.ide.accel.toolchain.hwKernelCompiler.hw.765336563" name="Hardware Kernel Compiler" superClass="com.xilinx.ide.accel.toolchain.hwKernelCompiler.hw">
+                            							
+                            <targetPlatform id="com.xilinx.ide.accel.config.hwkernel.hw.527460096..1054452030" name=""/>
+                            							
+                            <builder buildPath="${workspace_loc:/hash0_kernels}/Hardware" enableAutoBuild="true" id="com.xilinx.ide.accel.builder.kernel.1624396527" managedBuildOn="true" name="Kernel Project Builder.Hardware" superClass="com.xilinx.ide.accel.builder.kernel"/>
+                            							
+                            <tool id="com.xilinx.ide.accel.tool.hwKernelCompiler.2069566288" name="V++ Kernel Compiler" superClass="com.xilinx.ide.accel.tool.hwKernelCompiler">
+                                								
+                                <inputType id="com.xilinx.accelerated.toolchain.hw_compiler.input.cl.55796921" name="OpenCL files" superClass="com.xilinx.accelerated.toolchain.hw_compiler.input.cl"/>
+                                							
+                            </tool>
+                            						
+                        </toolChain>
+                        					
+                    </folderInfo>
+                    				
+                </configuration>
+                			
+            </storageModule>
+            			
+            <storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+            		
+        </cconfiguration>
+        	
+    </storageModule>
+    	
+    <storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+    	
+    <storageModule moduleId="cdtBuildSystem" version="4.0.0">
+        		
+        <project id="hash0_kernels.com.xilinx.ide.accel.hwKernelProjectType.435114629" name="Hw Kernel Project" projectType="com.xilinx.ide.accel.hwKernelProjectType"/>
+        	
+    </storageModule>
+    	
+    <storageModule moduleId="scannerConfiguration">
+        		
+        <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+        	
+    </storageModule>
+    
+</cproject>

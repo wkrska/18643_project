@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ASCII"?>
+<systemproject:SystemProject xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:systemproject="http://www.xilinx.com/systemproject" name="18643_project_system" platform="/afs/ece.cmu.edu/class/ece643/software/xilinxVitis/platforms/2021.1/xilinx_zcu102_base_202110_1/xilinx_zcu102_base_202110_1.xpfm" platformUID="xilinx.com:xd:xilinx_zcu102_base_202110_1:202110.1(custom)" sysConfig="xilinx_zcu102_base_202110_1" rootFSLocation="/afs/ece.cmu.edu/class/ece643/software/xilinxVitis/petalinux/2021.1/rootfs.ext4" linuxImage="/afs/ece.cmu.edu/class/ece643/software/xilinxVitis/petalinux/2021.1/Image" sysroot="/afs/ece.cmu.edu/class/ece643/software/xilinxVitis/petalinux/2021.1/sysroots/cortexa72-cortexa53-xilinx-linux">
+  <configuration name="Emulation-SW" id="com.xilinx.sdx.system.managedbuilder.swemu.configuration.2008024423">
+    <configBuildOptions xsi:type="systemproject:SystemOptions">
+      <applications name="18643_project_system_hw_link" domainName="" domainPrettyName="pl" appBuildConfig="Emulation-SW"/>
+      <applications name="18643_project" domainName="xrt" domainPrettyName="xrt" appBuildConfig="Emulation-SW"/>
+      <applications name="hash0_kernels" domainName="" domainPrettyName="pl" appBuildConfig="Emulation-SW"/>
+      <applications name="hash1_kernels" domainName="" domainPrettyName="pl" appBuildConfig="Emulation-SW"/>
+      <applications name="vadd_kernels" domainName="" domainPrettyName="pl" appBuildConfig="Emulation-SW"/>
+    </configBuildOptions>
+  </configuration>
+  <configuration name="Emulation-HW" id="com.xilinx.sdx.system.managedbuilder.hwemu.configuration.486808241">
+    <configBuildOptions xsi:type="systemproject:SystemOptions" target="hw_emu">
+      <applications name="18643_project_system_hw_link" domainName="" domainPrettyName="pl" appBuildConfig="Emulation-HW"/>
+      <applications name="18643_project" domainName="xrt" domainPrettyName="xrt" appBuildConfig="Emulation-HW"/>
+      <applications name="hash0_kernels" domainName="" domainPrettyName="pl" appBuildConfig="Emulation-HW"/>
+      <applications name="hash1_kernels" domainName="" domainPrettyName="pl" appBuildConfig="Emulation-HW"/>
+      <applications name="vadd_kernels" domainName="" domainPrettyName="pl" appBuildConfig="Emulation-HW"/>
+    </configBuildOptions>
+  </configuration>
+  <configuration name="Hardware" id="com.xilinx.sdx.system.managedbuilder.hw.configuration.560390867">
+    <configBuildOptions xsi:type="systemproject:SystemOptions" target="hw">
+      <applications name="18643_project_system_hw_link" domainName="" domainPrettyName="pl" appBuildConfig="Hardware"/>
+      <applications name="18643_project" domainName="xrt" domainPrettyName="xrt" appBuildConfig="Hardware"/>
+      <applications name="hash0_kernels" domainName="" domainPrettyName="pl" appBuildConfig="Hardware"/>
+      <applications name="hash1_kernels" domainName="" domainPrettyName="pl" appBuildConfig="Hardware"/>
+      <applications name="vadd_kernels" domainName="" domainPrettyName="pl" appBuildConfig="Hardware"/>
+    </configBuildOptions>
+  </configuration>
+</systemproject:SystemProject>

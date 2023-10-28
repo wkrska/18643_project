@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ASCII"?>
+<hwlink:HwLinkProject xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:hwlink="http://www.xilinx.com/acceleration/hwlink" name="18643_project_system_hw_link" platform="/afs/ece.cmu.edu/class/ece643/software/xilinxVitis/platforms/2021.1/xilinx_zcu102_base_202110_1/xilinx_zcu102_base_202110_1.xpfm" systemProject="18643_project_system" cpu="pl">
+  <configuration name="Emulation-SW" id="com.xilinx.ide.accel.config.hwlink.sw_emu.219309220">
+    <configBuildOptions xsi:type="hwlink:LinkOptions"/>
+  </configuration>
+  <configuration name="Emulation-HW" id="com.xilinx.ide.accel.config.hwlink.hw_emu.383812673">
+    <configBuildOptions xsi:type="hwlink:LinkOptions" target="hw_emu"/>
+  </configuration>
+  <configuration name="Hardware" id="com.xilinx.ide.accel.config.hwlink.hw.1337314164">
+    <configBuildOptions xsi:type="hwlink:LinkOptions" target="hw"/>
+  </configuration>
+</hwlink:HwLinkProject>

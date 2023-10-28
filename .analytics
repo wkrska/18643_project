@@ -1,0 +1,10 @@
+timestamp=[2023-10-28 13:56:36], mode=WORKBENCH_START, duration=0:00:05.354, duration_ms=5354, data={}
+timestamp=[2023-10-28 13:56:37], mode=WORKBENCH_UI_INIT, duration=0:00:00.349, duration_ms=349, data={editors_count=0, platform_editors_count=0, projects_count=0, platform_projects_count=0, active_platform_editor=false, projects=}
+timestamp=[2023-10-28 13:56:37], mode=PLATFORM_REPOSITORY_INIT, duration=0:00:00.401, duration_ms=401, data={}
+timestamp=[2023-10-28 14:00:18], mode=APP_CREATION, duration=0:00:02.085, duration_ms=2085, data={name=18643_project, project_type=sdk, os=linux, processor=cortex-a53, runtime=OpenCL, platform=xilinx_zcu102_base_202110_1, application_type=application}
+timestamp=[2023-10-28 14:08:08], mode=APP_CREATION, duration=0:00:00.193, duration_ms=193, data={name=hash0_kernels, project_type=sdk, os=NA, processor=Unknown, runtime=OpenCL, platform=xilinx_zcu102_base_202110_1, application_type=null}
+timestamp=[2023-10-28 14:09:19], mode=APP_CREATION, duration=0:00:00.171, duration_ms=171, data={name=hash1_kernels, project_type=sdk, os=NA, processor=Unknown, runtime=OpenCL, platform=xilinx_zcu102_base_202110_1, application_type=null}
+timestamp=[2023-10-28 14:14:54], mode=PLATFORM_REPOSITORY_INIT, duration=0:00:00.559, duration_ms=559, data={}
+timestamp=[2023-10-28 14:14:54], mode=WORKBENCH_START, duration=0:00:07.443, duration_ms=7443, data={}
+timestamp=[2023-10-28 14:14:55], mode=WORKBENCH_UI_INIT, duration=0:00:00.435, duration_ms=435, data={editors_count=2, platform_editors_count=0, projects_count=6, platform_projects_count=0, active_platform_editor=false, projects=18643_project,18643_project_system,18643_project_system_hw_link,RemoteSystemsTempFiles,hash0_kernels,hash1_kernels}
+timestamp=[2023-10-28 14:20:34], mode=APP_CREATION, duration=0:00:00.306, duration_ms=306, data={name=vadd_kernels, project_type=sdk, os=NA, processor=Unknown, runtime=OpenCL, platform=xilinx_zcu102_base_202110_1, application_type=null}

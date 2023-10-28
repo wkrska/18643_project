@@ -1,0 +1,42 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00007f74f89fec4d, pid=209435, tid=209436
+#
+# JRE version: OpenJDK Runtime Environment (11.0.2+9) (build 11.0.2+9)
+# Java VM: OpenJDK 64-Bit Server VM (11.0.2+9, mixed mode, tiered, compressed oops, g1 gc, linux-amd64)
+# Problematic frame:
+# C  [libc.so.6+0x39c4d]  __run_exit_handlers+0x3d
+#
+# No core dump will be written. Core dumps have been disabled. To enable core dumping, try "ulimit -c unlimited" before starting Java again
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.java.com/bugreport/crash.jsp
+# The crash happened outside the Java Virtual Machine in native code.
+# See problematic frame for where to report the bug.
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -Xms64m -Xmx1024m -Dorg.eclipse.swt.internal.gtk.cairoGraphics=false -Dosgi.configuration.area=@user.home/.Xilinx/Vitis/2021.1 --add-modules=ALL-SYSTEM --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.desktop/sun.swing=ALL-UNNAMED --add-opens=java.desktop/javax.swing=ALL-UNNAMED --add-opens=java.desktop/javax.swing.tree=ALL-UNNAMED --add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED --add-opens=java.desktop/javax.swing.plaf.synth=ALL-UNNAMED --add-opens=java.desktop/com.sun.awt=ALL-UNNAMED --add-opens=java.desktop/sun.awt.X11=ALL-UNNAMED /afs/ece.cmu.edu/class/ece643/software/xilinxVitis/Vitis/2021.1/eclipse/lnx64.o//plugins/org.eclipse.equinox.launcher_1.5.700.v20200207-2156.jar -os linux -ws gtk -arch x86_64 -showsplash -launcher /afs/ece.cmu.edu/class/ece643/software/xilinxVitis/Vitis/2021.1/eclipse/lnx64.o/eclipse -name Eclipse --launcher.library /afs/ece.cmu.edu/class/ece643/software/xilinxVitis/Vitis/2021.1/eclipse/lnx64.o//plugins/org.eclipse.equinox.launcher.gtk.linux.x86_64_1.1.1100.v20190907-0426/eclipse_1801.so -startup /afs/ece.cmu.edu/class/ece643/software/xilinxVitis/Vitis/2021.1/eclipse/lnx64.o//plugins/org.eclipse.equinox.launcher_1.5.700.v20200207-2156.jar --launcher.overrideVmargs -exitdata 1afe0008 -vm /afs/ece.cmu.edu/class/ece643/software/xilinxVitis/Vitis/2021.1/tps/lnx64/jre11.0.2/bin/java -vmargs -Xms64m -Xmx1024m -Dorg.eclipse.swt.internal.gtk.cairoGraphics=false -Dosgi.configuration.area=@user.home/.Xilinx/Vitis/2021.1 --add-modules=ALL-SYSTEM --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.desktop/sun.swing=ALL-UNNAMED --add-opens=java.desktop/javax.swing=ALL-UNNAMED --add-opens=java.desktop/javax.swing.tree=ALL-UNNAMED --add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED --add-opens=java.desktop/javax.swing.plaf.synth=ALL-UNNAMED --add-opens=java.desktop/com.sun.awt=ALL-UNNAMED --add-opens=java.desktop/sun.awt.X11=ALL-UNNAMED -jar /afs/ece.cmu.edu/class/ece643/software/xilinxVitis/Vitis/2021.1/eclipse/lnx64.o//plugins/org.eclipse.equinox.launcher_1.5.700.v20200207-2156.jar
+
+Host: Intel(R) Xeon(R) Silver 4208 CPU @ 2.10GHz, 32 cores, 125G, Red Hat Enterprise Linux Server release 7.9 (Maipo)
+Time: Sat Oct 28 14:13:41 2023 EDT elapsed time: 1085 seconds (0d 0h 18m 5s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00007f74f0012800):  JavaThread "main" [_thread_in_native, id=209436, stack(0x00007f74f96b4000,0x00007f74f97b5000)]
+
+Stack: [0x00007f74f96b4000,0x00007f74f97b5000],  sp=0x00007f74f97a90a0,  free space=980k
+Native frames: (J=compiled Java code, A=aot compiled Java code, j=interpreted, Vv=VM code, C=native code)
+C  [libc.so.6+0x39c4d]  __run_exit_handlers+0x3d
+
+Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
+J 9751  org.eclipse.swt.internal.gtk.GDK.gdk_window_get_origin(J[I[I)I (0 bytes) @ 0x00007f74e0eb0ea9 [0x00007f74e0eb0e40+0x0000000000000069]
+J 12991 c1 org.eclipse.swt.widgets.Control.getWindowOrigin()Lorg/eclipse/swt/graphics/Point; (34 bytes) @ 0x00007f74db1908cc [0x00007f74db190680+0x000000000000024c]
+J 21550 c2 org.eclipse.swt.widgets.Display.mapInPixels(Lorg/eclipse/swt/widgets/Control;Lorg/eclipse/swt/widgets/Control;II)Lorg/eclipse/swt/graphics/Point; (217 bytes) @ 0x00007f74e16a1ef8 [0x00007f74e16a1d60+0x0000000000000198]
+J 9641 c2 org.eclipse.swt.widgets.Control.drawBackground(Lorg/eclipse/swt/widgets/Control;JJIIII)V (431 bytes) @ 0x00007f74e0e8e104 [0x00007f74e0e8dfc0+0x0000000000000144]
+J 9213 c2 org.eclipse.swt.widgets.Control.windowProc(JJJ)J (282 bytes) @ 0x00007f74e0e48a60 [0x00007f74e0e488e0+0x0000000000000180]
+J 9167 c2 org.eclipse.swt.widgets.Display.windowProc(JJJ)J (24 bytes) @ 0x00007f74e0e35098 [0x00007f74e0e34f40+0x0000000000000158]
+v  ~StubRoutines::call_stub
+J 3946  org.eclipse.swt.internal.gtk.GTK.gtk_main_do_event(J)V (0 bytes) @ 0x00007f74e0a66401 [0x00007f74e0a663c0+0x0000000000000041]
