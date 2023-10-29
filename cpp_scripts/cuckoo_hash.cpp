@@ -38,7 +38,7 @@ struct tuple {
 struct table {
 	int status = 0; 		 // indicates whether the slot is occupied
 	int tag = 0;             // candidate bucket number of this element
-	struct tuple head[T];   // the entry point to the first tuple of this slot
+	struct tuple head[T];    // the entry point to the first tuple of this slot
 };
 
 struct table hash_table[R][C];
@@ -81,11 +81,18 @@ void insert (struct tuple buffer, int cnt) {
         hash_table[hash1][index1].tag = hash0;
         hash_table[hash1][index1].head[0] = buffer;
     } else {
-        // eviction
-        struct tuple temp = hash_table[hash0][index0].head[0];
-        hash_table[hash0][index0].tag = hash1;
-        hash_table[hash0][index0].head[0] = buffer;
-        insert(temp, cnt + 1);
+        // which slot to evict?
+        if (cnt%2 == 0) {
+            struct tuple temp = hash_table[hash0][index0].head[0];
+            hash_table[hash0][index0].tag = hash1;
+            hash_table[hash0][index0].head[0] = buffer;
+            insert(temp, cnt + 1);
+        } else {
+            struct tuple temp = hash_table[hash1][index1].head[0];
+            hash_table[hash1][index1].tag = hash0;
+            hash_table[hash1][index1].head[0] = buffer;
+            insert(temp, cnt + 1);
+        }
     }
 	return;
 }
