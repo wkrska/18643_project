@@ -44,9 +44,9 @@ table_data_t parse_table_file(char *filename, int xdim, int ydim) {
  
 int main(int argc, char *argv[])
 {
-  if (argc != 10) {
+  if (argc != 11) {
     std::cout << "ARGS ERROR" << std::endl;
-    std::cout << "./main <t1_filename> <t1_xdim> <t1_ydim> <t2_filename> <t2_xdim> <t2_ydim> <t3_filename> <t3_xdim> <t3_ydim>" << std::endl;
+    std::cout << "./main <t1_filename> <t1_xdim> <t1_ydim> <t2_filename> <t2_xdim> <t2_ydim> <t3_filename> <t3_xdim> <t3_ydim> <join_column_value>" << std::endl;
     return 1;
   }
 
@@ -61,6 +61,24 @@ int main(int argc, char *argv[])
   table_data_t t2_data = parse_table_file(argv[4], t2_xdim, t2_ydim);
   std::cout << "TABLE 2" << std::endl;
   print_table_data(t2_data);
+
+  int join_column_value = strtol(argv[10], nullptr, 0);
+  int t1_join_column_index;
+  int t2_join_column_index;
+  for (int i = 0; i < t1_xdim; i++) {
+    if (t1_data.arr[i] == join_column_value) {
+      t1_join_column_index = i;
+    }
+  }
+  for (int i = 0; i < t2_xdim; i++) {
+    if
+  }
+
+  for (int i = 0; i < t1_ydim; i++) {
+    for (int j = 0; j < t2_ydim; j++) {
+      
+    }
+  }
 
   return 0;
 }
