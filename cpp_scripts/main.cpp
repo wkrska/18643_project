@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
+#include "cuckoo_hash.h"
 
 struct table_data_t {
   int *arr;
@@ -65,20 +66,26 @@ int main(int argc, char *argv[])
   int join_column_value = strtol(argv[10], nullptr, 0);
   int t1_join_column_index;
   int t2_join_column_index;
-  for (int i = 0; i < t1_xdim; i++) {
+  for (int i = 0; i < t1_data.xdim; i++) {
     if (t1_data.arr[i] == join_column_value) {
       t1_join_column_index = i;
     }
   }
-  for (int i = 0; i < t2_xdim; i++) {
-    if
-  }
-
-  for (int i = 0; i < t1_ydim; i++) {
-    for (int j = 0; j < t2_ydim; j++) {
-      
+  for (int i = 0; i < t2_data.xdim; i++) {
+    if (t2_data.arr[i] == join_column_value) {
+      t2_join_column_index = i;
     }
   }
+
+  for (int i = 0; i < t1_data.ydim; i++) {
+    int key = t1_data.arr[i * t1_data.xdim + t1_join_column_index];
+    insert(buffer(key, i, hash_function(0, key), hash_function(1, key)), 0);
+  }
+  for (int i = 0; i < t2_data.ydim; i++) {
+    int key = t2_data.arr[i * t2_data.xdim + t2_join_column_index];
+    insert(buffer(key, i, hash_function(0, key), hash_function(1, key)), 0);
+  }
+  print_addr_table();
 
   return 0;
 }

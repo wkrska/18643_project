@@ -11,35 +11,6 @@ using namespace std;
         stream out
 */
 
-struct address_table {
-  int rid1 = -1;
-  int rid2 = -1;
-  int key = -1;
-};
-
-struct buffer {
-    // this is the 'tuple' from the paper
-  int rid;
-  int key;
-  int hash0;
-  int hash1;
-
-  buffer(){};
-
-  buffer (int key, int rid) {
-    this->rid = rid;
-    this->key = key;
-    this->hash0 = hash_function(0, key);
-    this->hash1 = hash_function(1, key);
-  }
-};
-
-struct table {
-  int status = 0; 	 // indicates whether the slot is occupied
-  int tag = 0;             // candidate bucket number of this element
-  struct buffer head[T];   // the entry point to the first tuple of this slot
-};
-
 int first_free_index_addr_table = 0;
 struct address_table addr_table[SIZE];
 struct table hash_table[R][C];
