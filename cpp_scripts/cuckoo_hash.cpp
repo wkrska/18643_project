@@ -137,11 +137,13 @@ void insert(struct buffer buf, int cnt) {
   } else {
     // which slot to evict? paper does not specify
     if (cnt%2 == 0) {
+      index0 = 0;
       struct buffer temp = hash_table[hash0][index0].head[0];
       hash_table[hash0][index0].tag = hash1;
       hash_table[hash0][index0].head[0] = buf;
       insert(temp, cnt + 1);
     } else {
+      index1 = 0;
       struct buffer temp = hash_table[hash1][index1].head[0];
       hash_table[hash1][index1].tag = hash0;
       hash_table[hash1][index1].head[0] = buf;
