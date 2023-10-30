@@ -77,11 +77,11 @@ int main(int argc, char *argv[])
     }
   }
 
-  for (int i = 0; i < t1_data.ydim; i++) {
+  for (int i = 1; i < t1_data.ydim; i++) {
     int key = t1_data.arr[i * t1_data.xdim + t1_join_column_index];
     insert(buffer(key, i, hash_function(0, key), hash_function(1, key)), 0);
   }
-  for (int i = 0; i < t2_data.ydim; i++) {
+  for (int i = 1; i < t2_data.ydim; i++) {
     int key = t2_data.arr[i * t2_data.xdim + t2_join_column_index];
     insert(buffer(key, i, hash_function(0, key), hash_function(1, key)), 0);
   }
