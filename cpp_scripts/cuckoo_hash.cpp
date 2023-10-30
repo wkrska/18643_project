@@ -11,13 +11,6 @@ using namespace std;
         stream out
 */
 
-int hash_function (int function, int key) {
-  switch (function) {
-    case 0: return key % R;
-    case 1: return (key / R) % R;
-  }
-}
-
 struct address_table {
   int rid1 = -1;
   int rid2 = -1;
@@ -51,7 +44,15 @@ int first_free_index_addr_table = 0;
 struct address_table addr_table[SIZE];
 struct table hash_table[R][C];
 
-int scan (int row) {
+int hash_function(int function, int key) {
+  switch (function) {
+    case 0: return key % R;
+    case 1: return (key / R) % R;
+  }
+}
+
+
+int scan(int row) {
   /*
   purpose: find the first free slot of a given row/bucket
            return -1 if all slots are full
@@ -65,7 +66,7 @@ int scan (int row) {
   return -1;
 }
 
-int compare (int row, int key) {
+int compare(int row, int key) {
   /*
   purpose: check if the given key is present in the given row
   
@@ -81,7 +82,7 @@ int compare (int row, int key) {
   return index;
 }
 
-int has_joined (int key, int hash0, int hash1, int rid) {
+int has_joined(int key, int hash0, int hash1, int rid) {
   int index0 = compare(hash0, key);
   int index1 = compare(hash1, key);
   if (index0 != -1) {
@@ -100,7 +101,7 @@ int has_joined (int key, int hash0, int hash1, int rid) {
   return -1;
 }
 
-void insert (struct buffer buf, int cnt) {
+void insert(struct buffer buf, int cnt) {
   /*
   purpose: insert an item into hash table. If the same key is present
           perform join.
@@ -150,7 +151,7 @@ void insert (struct buffer buf, int cnt) {
   return;
 }
 
-void print_addr_table () {
+void print_addr_table() {
   int key, rid1, rid2;
   for (int i = 0; i < SIZE; i++) {
     key = addr_table[i].key;
