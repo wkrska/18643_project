@@ -61,17 +61,6 @@ int main(int argc, char *argv[])
   table_data_t t2_data = parse_table_file(argv[4], t2_xdim, t2_ydim);
   std::cout << "TABLE 2" << std::endl;
   print_table_data(t2_data);
-//  char **t1_arr = 
 
-  //std::cout << "argc == " << argc << '\n';
-
-  //for (int ndx{}; ndx != argc; ++ndx)
-  //    std::cout << "argv[" << ndx << "] == " << argv[ndx] << '\n';
-  //std::cout << "argv[" << argc << "] == "
-  //          << static_cast<void*>(argv[argc]) << '\n';
-
-  /*...*/
-
-  //return argc == 3 ? EXIT_SUCCESS : EXIT_FAILURE; // optional return value
   return 0;
 }
