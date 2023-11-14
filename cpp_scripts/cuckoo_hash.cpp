@@ -20,6 +20,7 @@ int hash_function(int function, int key) {
     case 0: return key % R;
     case 1: return (key / R) % R;
   }
+  return INT_MIN; // illegal
 }
 
 
@@ -53,9 +54,14 @@ int compare(int row, int key) {
   return index;
 }
 
-int has_joined(int key, int hash0, int hash1, int rid) {
+int probe(struct buffer buf) {
+  int key = buf.key;
+  int rid = buf.rid;
+  int hash0 = buf.hash0;
+  int hash1 = buf.hash1;
   int index0 = compare(hash0, key);
   int index1 = compare(hash1, key);
+
   if (index0 != -1) {
     addr_table[first_free_index_addr_table].rid1 = hash_table[hash0][index0].head[0].rid;
     addr_table[first_free_index_addr_table].rid2 = rid;
@@ -72,7 +78,7 @@ int has_joined(int key, int hash0, int hash1, int rid) {
   return -1;
 }
 
-void insert(struct buffer buf, int cnt) {
+void build(struct buffer buf, int cnt) {
   /*
   purpose: insert an item into hash table. If the same key is present
           perform join.
@@ -93,9 +99,11 @@ void insert(struct buffer buf, int cnt) {
   int index0 = scan(hash0);
   int index1 = scan(hash1);
   
+  /*
   if (has_joined(key, hash0, hash1, rid) != -1) {
     return;
   }
+  */
   
   if (index0 != -1) {
     hash_table[hash0][index0].status = 1;
@@ -112,13 +120,13 @@ void insert(struct buffer buf, int cnt) {
       struct buffer temp = hash_table[hash0][index0].head[0];
       hash_table[hash0][index0].tag = hash1;
       hash_table[hash0][index0].head[0] = buf;
-      insert(temp, cnt + 1);
+      build(temp, cnt + 1);
     } else {
       index1 = 0;
       struct buffer temp = hash_table[hash1][index1].head[0];
       hash_table[hash1][index1].tag = hash0;
       hash_table[hash1][index1].head[0] = buf;
-      insert(temp, cnt + 1);
+      build(temp, cnt + 1);
     }
   }
   return;
@@ -157,14 +165,14 @@ void print_addr_table() {
 
 
 //int main() {
-//    insert(buffer(1, 0), 0);
-//    insert(buffer(3, 1), 0);
-//    insert(buffer(5, 2), 0);
-//    insert(buffer(7, 3), 0);
-//    insert(buffer(2, 0), 0);
-//    insert(buffer(4, 1), 0);
-//    insert(buffer(5, 2), 0);
-//    insert(buffer(3, 3), 0);
+//    build(buffer(1, 0, hash_function(0, 1), hash_function(1, 1)), 0);
+//    build(buffer(3, 1, hash_function(0, 3), hash_function(1, 3)), 0);
+//    build(buffer(5, 2, hash_function(0, 5), hash_function(1, 5)), 0);
+//    build(buffer(7, 3, hash_function(0, 7), hash_function(1, 7)), 0);
+//    probe(buffer(2, 0, hash_function(0, 2), hash_function(1, 2)), 0);
+//    probe(buffer(4, 1, hash_function(0, 4), hash_function(1, 4)), 0);
+//    probe(buffer(5, 2, hash_function(0, 5), hash_function(1, 5)), 0);
+//    probe(buffer(3, 3, hash_function(0, 3), hash_function(1, 3)), 0);
 //    print_addr_table();
 //    return 0;
 //}
