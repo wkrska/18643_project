@@ -101,19 +101,38 @@ void build(struct buffer buf, int cnt) {
     hash_table[hash1][index1].tag = hash0;
     hash_table[hash1][index1].head[0] = buf;
   } else {
-    // which slot to evict? paper does not specify
-    if (cnt % 2 == 0) {
-      index0 = 0;
-      struct buffer temp = hash_table[hash0][index0].head[0];
-      hash_table[hash0][index0].tag = hash1;
-      hash_table[hash0][index0].head[0] = buf;
-      build(temp, cnt + 1);
-    } else {
-      index1 = 0;
-      struct buffer temp = hash_table[hash1][index1].head[0];
-      hash_table[hash1][index1].tag = hash0;
-      hash_table[hash1][index1].head[0] = buf;
-      build(temp, cnt + 1);
+    // try eviction, else chain stuff
+    int is_evicted = 0;
+    int i = 0;
+    while (i < R && is_evicted == 0) {
+      int free_slot = scan(hash_table[hash0][i].tag);
+      if (free_slot != INT_MIN) {
+        hash_table[hash_table[hash0][i].tag][free_slot].status = 1;
+        hash_table[hash_table[hash0][i].tag][free_slot].tag = hash0;
+        hash_table[hash_table[hash0][i].tag][free_slot].head[0] = hash_table[hash0][i].head[0];
+        hash_table[hash0][i].tag = hash1;
+        hash_table[hash0][i].head[0] = buf;
+        is_evicted = 1;
+      }
+      i++;
+    }
+    i = 0;
+    while (i < R && is_evicted == 0) {
+      int free_slot = scan(hash_table[hash1][i].tag);
+      if (free_slot != INT_MIN) {
+        hash_table[hash_table[hash1][i].tag][free_slot].status = 1;
+        hash_table[hash_table[hash1][i].tag][free_slot].tag = hash1;
+        hash_table[hash_table[hash1][i].tag][free_slot].head[0] = hash_table[hash1][i].head[0];
+        hash_table[hash1][i].tag = hash0;
+        hash_table[hash1][i].head[0] = buf;
+        is_evicted = 1;
+      }
+      i++;
+    }
+    if (is_evicted == 0) {
+      // ideally this does not happen
+      int ind = find_free_collision_list_spot(hash_table[hash0][index0].head);
+      hash_table[hash0][index0].head[ind] = buf;
     }
   }
   return;
@@ -147,6 +166,15 @@ void print_hash_table() {
     std::cout<<std::endl;
   }
   return;
+}
+
+int find_free_collision_list_spot (struct buffer buf[]) {
+  for (int i = 0; i < R; i++) {
+    if (buf[i].key == INT_MIN) {
+      return i;
+    }
+  }
+  return INT_MIN;
 }
 
 /*

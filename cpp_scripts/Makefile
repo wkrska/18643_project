@@ -17,7 +17,7 @@ cuckoo_hash.o: cuckoo_hash.h cuckoo_hash.cpp
 
 #Square.o: Square.h Point.h
 check: 
-	./main example_table_1.txt 5 6 example_table_2.txt 4 6 bruh bruh bruh 111
+	./main example_table_1.txt 5 6 example_table_2.txt 4 6 bruh bruh bruh 1
 
 clean:
 	rm -rf *.o

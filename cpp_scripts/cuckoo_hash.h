@@ -2,11 +2,8 @@
 #include <climits>
 #define R 10 // number of rows in a hash table
 #define C 4  // number of slots in a row
-#define T 20 // size of the list of tuples, not sure how big this should be
 #define MAX 200 // max number of time of hashing, for cycle detection
 #define SIZE 10 // size of the address table
-
-//int hash_function(int function, int key);
 
 struct address_table {
   int rid1 = INT_MIN;
@@ -15,7 +12,7 @@ struct address_table {
 };
 
 struct buffer {
-    // this is the 'tuple' from the paper
+  // this is the 'tuple' from the paper
   int rid;
   int key;
   int hash0;
@@ -34,7 +31,7 @@ struct buffer {
 struct table {
   int status = 0; 	       // indicates whether the slot is occupied
   int tag = 0;             // candidate bucket number of this element; this slightly differs from paper
-  struct buffer head[T];   // the entry point to the first tuple of this slot
+  struct buffer head[R];      // basically the collision list. 
 };
 
 int hash_function(int function, int key);
@@ -44,3 +41,4 @@ int probe(struct buffer buf);
 void build(struct buffer buf, int cnt);
 void print_addr_table();
 void print_hash_table();
+int find_free_collision_list_spot (struct buffer buf[]);
