@@ -1,1 +1,2 @@
 1. The script assumes the selected join column name exists in both table. If this is not true, the program seg faults. For example, try joining on '111' or '12'.
+2. The build function can evict something that has a long collision list. The eviction would destroy that list. This is a pretty rare corner case.

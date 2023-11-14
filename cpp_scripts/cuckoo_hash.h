@@ -9,6 +9,13 @@ struct address_table {
   int rid1 = INT_MIN;
   int rid2 = INT_MIN;
   int key = INT_MIN;
+  address_table(){};
+
+  address_table (int rid1, int rid2, int key) {
+    this->rid1 = rid1;
+    this->rid2 = rid2;
+    this->key = key;
+  }
 };
 
 struct buffer {
@@ -32,6 +39,13 @@ struct table {
   int status = 0; 	       // indicates whether the slot is occupied
   int tag = 0;             // candidate bucket number of this element; this slightly differs from paper
   struct buffer head[R];      // basically the collision list. 
+
+  table(){};
+  table (int status, int tag, struct buffer head, int index) {
+    this->status = status;
+    this->tag = tag;
+    this->head[index] = head;
+  }
 };
 
 int hash_function(int function, int key);
