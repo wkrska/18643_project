@@ -38,7 +38,7 @@ struct buffer {
 };
 
 struct table {
-  int status = 0; 	 // indicates whether the slot is occupied
+  int status = 0; 	       // indicates whether the slot is occupied
   int tag = 0;             // candidate bucket number of this element
   struct buffer head[T];   // the entry point to the first tuple of this slot
 };

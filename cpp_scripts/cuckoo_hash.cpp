@@ -92,18 +92,12 @@ void build(struct buffer buf, int cnt) {
     return;
   }
 
-  int key = buf.key;
-  int rid = buf.rid;
+  // int key = buf.key;
+  // int rid = buf.rid;
   int hash0 = buf.hash0;
   int hash1 = buf.hash1;
   int index0 = scan(hash0);
   int index1 = scan(hash1);
-  
-  /*
-  if (has_joined(key, hash0, hash1, rid) != -1) {
-    return;
-  }
-  */
   
   if (index0 != -1) {
     hash_table[hash0][index0].status = 1;
@@ -163,19 +157,20 @@ void print_addr_table() {
 */
 
 
-
-//int main() {
-//    build(buffer(1, 0, hash_function(0, 1), hash_function(1, 1)), 0);
-//    build(buffer(3, 1, hash_function(0, 3), hash_function(1, 3)), 0);
-//    build(buffer(5, 2, hash_function(0, 5), hash_function(1, 5)), 0);
-//    build(buffer(7, 3, hash_function(0, 7), hash_function(1, 7)), 0);
-//    probe(buffer(2, 0, hash_function(0, 2), hash_function(1, 2)), 0);
-//    probe(buffer(4, 1, hash_function(0, 4), hash_function(1, 4)), 0);
-//    probe(buffer(5, 2, hash_function(0, 5), hash_function(1, 5)), 0);
-//    probe(buffer(3, 3, hash_function(0, 3), hash_function(1, 3)), 0);
-//    print_addr_table();
-//    return 0;
-//}
+/*
+int main() {
+    build(buffer(1, 0, hash_function(0, 1), hash_function(1, 1)), 0);
+    build(buffer(3, 1, hash_function(0, 3), hash_function(1, 3)), 0);
+    build(buffer(5, 2, hash_function(0, 5), hash_function(1, 5)), 0);
+    build(buffer(7, 3, hash_function(0, 7), hash_function(1, 7)), 0);
+    probe(buffer(2, 0, hash_function(0, 2), hash_function(1, 2)));
+    probe(buffer(4, 1, hash_function(0, 4), hash_function(1, 4)));
+    probe(buffer(5, 2, hash_function(0, 5), hash_function(1, 5)));
+    probe(buffer(3, 3, hash_function(0, 3), hash_function(1, 3)));
+    print_addr_table();
+    return 0;
+}
+*/
 
 
 

@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
+  std::cout<<"\nJoin on the column named "<<argv[10]<<std::endl<<"First row is the column names\n";
   int t1_xdim = strtol(argv[2], nullptr, 0);
   int t1_ydim = strtol(argv[3], nullptr, 0);
   table_data_t t1_data = parse_table_file(argv[1], t1_xdim, t1_ydim);
