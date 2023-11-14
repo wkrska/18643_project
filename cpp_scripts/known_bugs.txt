@@ -1,0 +1,1 @@
+1. The script assumes the selected join column name exists in both table. If this is not true, the program seg faults. For example, try joining on '111' or '12'.

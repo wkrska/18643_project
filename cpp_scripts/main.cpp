@@ -87,6 +87,6 @@ int main(int argc, char *argv[])
     probe(buffer(key, i, hash_function(0, key), hash_function(1, key)));
   }
   print_addr_table();
-
+  print_hash_table();
   return 0;
 }

@@ -25,7 +25,7 @@ int hash_function(int function, int key) {
 int scan(int row) {
   /*
   purpose: find the first free slot of a given row/bucket
-           return -1 if all slots are full
+           return INT_MIN if all slots are full
   */
 
   for (int i = 0; i < C; i++) {
@@ -33,7 +33,7 @@ int scan(int row) {
       return i;
     }
   }
-  return -1;
+  return INT_MIN;
 }
 
 int compare(int row, int key) {
@@ -70,17 +70,13 @@ int probe(struct buffer buf) {
     addr_table[first_free_index_addr_table].rid1 = hash_table[hash1][index1].head[0].rid;
     addr_table[first_free_index_addr_table].rid2 = rid;
     addr_table[first_free_index_addr_table].key = key;
+    first_free_index_addr_table++;
     return 1;
   }
   return INT_MIN;
 }
 
 void build(struct buffer buf, int cnt) {
-  /*
-  purpose: insert an item into hash table. If the same key is present
-          perform join.
-  
-  */
   
   if (cnt == MAX) {
     // cnt counts how many times this function has been called
@@ -106,7 +102,7 @@ void build(struct buffer buf, int cnt) {
     hash_table[hash1][index1].head[0] = buf;
   } else {
     // which slot to evict? paper does not specify
-    if (cnt%2 == 0) {
+    if (cnt % 2 == 0) {
       index0 = 0;
       struct buffer temp = hash_table[hash0][index0].head[0];
       hash_table[hash0][index0].tag = hash1;
@@ -125,7 +121,7 @@ void build(struct buffer buf, int cnt) {
 
 void print_addr_table() {
   int key, rid1, rid2;
-  std::cout<<"ADDR TABLE\n";
+  std::cout<<"\nADDR TABLE\n";
   for (int i = 0; i < SIZE; i++) {
     key = addr_table[i].key;
     rid1 = addr_table[i].rid1;;
@@ -133,6 +129,22 @@ void print_addr_table() {
     if (key != INT_MIN)  {
       std::cout<<"Key: "<<key<<" rid1: "<<rid1<<" rid2: "<<rid2<<"\n";
     }
+  }
+  return;
+}
+
+void print_hash_table() {
+  std::cout<<"\nHASH TABLE\n";
+  for (int i = 0; i < R; i++) {
+    for (int j = 0; j < C; j++) {
+      if (hash_table[i][j].status == 1) {
+        std::cout<<hash_table[i][j].head[0].key;
+      } else {
+        std::cout<<" ";
+      }
+      std::cout<<" | ";
+    }
+    std::cout<<std::endl;
   }
   return;
 }
@@ -171,19 +183,3 @@ int main() {
     return 0;
 }
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
