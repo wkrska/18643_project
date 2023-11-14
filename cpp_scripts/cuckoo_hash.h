@@ -9,9 +9,9 @@
 //int hash_function(int function, int key);
 
 struct address_table {
-  int rid1 = -1;
-  int rid2 = -1;
-  int key = -1;
+  int rid1 = INT_MIN;
+  int rid2 = INT_MIN;
+  int key = INT_MIN;
 };
 
 struct buffer {

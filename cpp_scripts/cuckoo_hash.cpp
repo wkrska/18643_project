@@ -1,7 +1,5 @@
 #include "cuckoo_hash.h"
 
-using namespace std;
-
 /*
 	Fig. 2 Dataflow:
 	input -> 
@@ -43,7 +41,6 @@ int compare(int row, int key) {
   purpose: check if the given key is present in the given row
   
   */
-  int index = -1;
   for (int i = 0; i < C; i++) {
     if (hash_table[row][i].status == 1) {
       if (hash_table[row][i].head[0].key == key) {
@@ -51,7 +48,7 @@ int compare(int row, int key) {
       }
     }
   }
-  return index;
+  return INT_MIN;
 }
 
 int probe(struct buffer buf) {
@@ -62,20 +59,20 @@ int probe(struct buffer buf) {
   int index0 = compare(hash0, key);
   int index1 = compare(hash1, key);
 
-  if (index0 != -1) {
+  if (index0 != INT_MIN) {
     addr_table[first_free_index_addr_table].rid1 = hash_table[hash0][index0].head[0].rid;
     addr_table[first_free_index_addr_table].rid2 = rid;
     addr_table[first_free_index_addr_table].key = key;
     first_free_index_addr_table++;
     return 1;
   }
-  if (index1 != -1) {
+  if (index1 != INT_MIN) {
     addr_table[first_free_index_addr_table].rid1 = hash_table[hash1][index1].head[0].rid;
     addr_table[first_free_index_addr_table].rid2 = rid;
     addr_table[first_free_index_addr_table].key = key;
     return 1;
   }
-  return -1;
+  return INT_MIN;
 }
 
 void build(struct buffer buf, int cnt) {
@@ -88,7 +85,7 @@ void build(struct buffer buf, int cnt) {
   if (cnt == MAX) {
     // cnt counts how many times this function has been called
     // when cnt == MAX, we treat that as a cycle
-    cout<<"There might be an inifinte loop!!\n";
+    std::cout<<"There might be an inifinte loop!!\n";
     return;
   }
 
@@ -99,11 +96,11 @@ void build(struct buffer buf, int cnt) {
   int index0 = scan(hash0);
   int index1 = scan(hash1);
   
-  if (index0 != -1) {
+  if (index0 != INT_MIN) {
     hash_table[hash0][index0].status = 1;
     hash_table[hash0][index0].tag = hash1;
     hash_table[hash0][index0].head[0] = buf;
-  } else if (index1 != -1) {
+  } else if (index1 != INT_MIN) {
     hash_table[hash1][index1].status = 1;
     hash_table[hash1][index1].tag = hash0;
     hash_table[hash1][index1].head[0] = buf;
@@ -128,11 +125,14 @@ void build(struct buffer buf, int cnt) {
 
 void print_addr_table() {
   int key, rid1, rid2;
+  std::cout<<"ADDR TABLE\n";
   for (int i = 0; i < SIZE; i++) {
     key = addr_table[i].key;
     rid1 = addr_table[i].rid1;;
     rid2 = addr_table[i].rid2;;
-    cout<<"Key: "<<key<<" rid1: "<<rid1<<" rid2: "<<rid2<<"\n";
+    if (key != INT_MIN)  {
+      std::cout<<"Key: "<<key<<" rid1: "<<rid1<<" rid2: "<<rid2<<"\n";
+    }
   }
   return;
 }
