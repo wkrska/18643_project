@@ -9,13 +9,12 @@ struct address_table {
   int rid1 = INT_MIN;
   int rid2 = INT_MIN;
   int key = INT_MIN;
-  address_table(){};
-
-  address_table (int rid1, int rid2, int key) {
-    this->rid1 = rid1;
-    this->rid2 = rid2;
-    this->key = key;
-  }
+  //address_table(){};
+  //address_table (int rid1, int rid2, int key) {
+  //  this->rid1 = rid1;
+  //  this->rid2 = rid2;
+  //  this->key = key;
+  //}
 };
 
 struct buffer {

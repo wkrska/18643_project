@@ -60,7 +60,11 @@ int probe(struct buffer buf) {
   int index1 = compare(hash1, key);
 
   if (index0 != INT_MIN) {
-    addr_table[first_free_index_addr_table] = address_table(hash_table[hash0][index0].head[0].rid, rid, key);
+    struct address_table new_entry;
+    new_entry.rid1 = hash_table[hash0][index0].head[0].rid;
+    new_entry.rid2 = rid;
+    new_entry.key = key;
+    addr_table[first_free_index_addr_table] = new_entry;
     first_free_index_addr_table++;
     return 1;
   }
