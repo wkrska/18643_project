@@ -97,9 +97,17 @@ void build(struct buffer buf, int cnt) {
   int index1 = scan(hash1);
   
   if (index0 != INT_MIN) {
-    hash_table[hash0][index0] = table(1, hash1, buf, 0);
+    struct table new_table;
+    new_table.status = 1;
+    new_table.tag = hash1;
+    new_table.head[0] = buf;
+    hash_table[hash0][index0] = new_table;
   } else if (index1 != INT_MIN) {
-    hash_table[hash1][index1] = table(1, hash0, buf, 0);
+    struct table new_table;
+    new_table.status = 1;
+    new_table.tag = hash0;
+    new_table.head[0] = buf;
+    hash_table[hash1][index1] = new_table;
   } else {
     // try eviction, else chain stuff
     int is_evicted = 0;
@@ -107,8 +115,16 @@ void build(struct buffer buf, int cnt) {
     while (i < C && is_evicted == 0) {
       int free_slot = scan(hash_table[hash0][i].tag);
       if (free_slot != INT_MIN) {
-        hash_table[hash_table[hash0][i].tag][free_slot] = table(1, hash0, hash_table[hash0][i].head[0], 0);
-        hash_table[hash0][i] = table(1, hash1, buf, 0);
+	struct table new_table1;
+        new_table1.status = 1;
+        new_table1.tag = hash0;
+        new_table1.head[0] = hash_table[hash0][i].head[0];
+        hash_table[hash_table[hash0][i].tag][free_slot] = new_table1;
+	struct table new_table2;
+        new_table2.status = 1;
+        new_table2.tag = hash1;
+        new_table2.head[0] = buf;
+        hash_table[hash0][i] = new_table2;
         is_evicted = 1;
       }
       i++;
@@ -117,12 +133,20 @@ void build(struct buffer buf, int cnt) {
     while (i < C && is_evicted == 0) {
       int free_slot = scan(hash_table[hash1][i].tag);
       if (free_slot != INT_MIN) {
-        hash_table[hash_table[hash1][i].tag][free_slot] = table(1, hash1, hash_table[hash1][i].head[0], 0);
+	struct table new_table1;
+        new_table1.status = 1;
+        new_table1.tag = hash1;
+        new_table1.head[0] = hash_table[hash1][i].head[0];
+        hash_table[hash_table[hash1][i].tag][free_slot] = new_table1;
         // hash_table[hash_table[hash1][i].tag][free_slot].status = 1;
         // hash_table[hash_table[hash1][i].tag][free_slot].tag = hash1;
         // hash_table[hash1][i].tag = hash0;
         // hash_table[hash1][i].head[0] = buf;
-        hash_table[hash1][i] = table(1, hash0, buf, 0);
+	struct table new_table2;
+        new_table2.status = 1;
+        new_table2.tag = hash0;
+        new_table2.head[0] = buf;
+        hash_table[hash1][i] = new_table2;
         is_evicted = 1;
       }
       i++;

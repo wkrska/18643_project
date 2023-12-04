@@ -36,13 +36,12 @@ struct table {
   int status = 0; 	       // indicates whether the slot is occupied
   int tag = 0;             // candidate bucket number of this element; this slightly differs from paper
   struct buffer head[R];      // basically the collision list. 
-
-  table(){};
-  table (int status, int tag, struct buffer head, int index) {
-    this->status = status;
-    this->tag = tag;
-    this->head[index] = head;
-  }
+  //table(){};
+  //table (int status, int tag, struct buffer head, int index) {
+  //  this->status = status;
+  //  this->tag = tag;
+  //  this->head[index] = head;
+  //}
 };
 
 int hash_function(int function, int key);
