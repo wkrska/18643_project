@@ -12,9 +12,13 @@ struct table_data_t {
 };
 
 void print_table_data(table_data_t t) {
+  printf("====================\n");
   for (int i = 0; i < t.ydim; i++) {
     for (int j = 0; j < t.xdim; j++) {
       printf("%3d ", t.arr[i * t.xdim + j]);
+    }
+    if (i == 0) {
+      printf("\n====================");
     }
     printf("\n");
   }
@@ -87,6 +91,6 @@ int main(int argc, char *argv[])
     probe(buffer(key, i, hash_function(0, key), hash_function(1, key)));
   }
   print_addr_table();
-  // print_hash_table();
+  print_hash_table();
   return 0;
 }

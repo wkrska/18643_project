@@ -99,12 +99,12 @@ void build(struct buffer buf, int cnt) {
   if (index0 != INT_MIN) {
     hash_table[hash0][index0] = table(1, hash1, buf, 0);
   } else if (index1 != INT_MIN) {
-    hash_table[hash0][index0] = table(1, hash0, buf, 0);
+    hash_table[hash1][index1] = table(1, hash0, buf, 0);
   } else {
     // try eviction, else chain stuff
     int is_evicted = 0;
     int i = 0;
-    while (i < R && is_evicted == 0) {
+    while (i < C && is_evicted == 0) {
       int free_slot = scan(hash_table[hash0][i].tag);
       if (free_slot != INT_MIN) {
         hash_table[hash_table[hash0][i].tag][free_slot] = table(1, hash0, hash_table[hash0][i].head[0], 0);
@@ -114,14 +114,15 @@ void build(struct buffer buf, int cnt) {
       i++;
     }
     i = 0;
-    while (i < R && is_evicted == 0) {
+    while (i < C && is_evicted == 0) {
       int free_slot = scan(hash_table[hash1][i].tag);
       if (free_slot != INT_MIN) {
         hash_table[hash_table[hash1][i].tag][free_slot] = table(1, hash1, hash_table[hash1][i].head[0], 0);
-        hash_table[hash_table[hash1][i].tag][free_slot].status = 1;
-        hash_table[hash_table[hash1][i].tag][free_slot].tag = hash1;
-        hash_table[hash1][i].tag = hash0;
-        hash_table[hash1][i].head[0] = buf;
+        // hash_table[hash_table[hash1][i].tag][free_slot].status = 1;
+        // hash_table[hash_table[hash1][i].tag][free_slot].tag = hash1;
+        // hash_table[hash1][i].tag = hash0;
+        // hash_table[hash1][i].head[0] = buf;
+        hash_table[hash1][i] = table(1, hash0, buf, 0);
         is_evicted = 1;
       }
       i++;
@@ -151,14 +152,21 @@ void print_addr_table() {
 
 void print_hash_table() {
   std::cout<<"\nHASH TABLE\n";
+  printf("====================\n");
   for (int i = 0; i < R; i++) {
     for (int j = 0; j < C; j++) {
       if (hash_table[i][j].status == 1) {
         std::cout<<hash_table[i][j].head[0].key;
+        if (hash_table[i][j].head[0].key < 100 and hash_table[i][j].head[0].key > 9) {
+          std::cout<<" |";
+        } else if (hash_table[i][j].head[0].key < 10) {
+          std::cout<<"  |";
+        } else {
+          std::cout<<"|";
+        }
       } else {
-        std::cout<<" ";
+        std::cout<<"   |";
       }
-      std::cout<<" | ";
     }
     std::cout<<std::endl;
   }
