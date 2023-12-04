@@ -69,7 +69,11 @@ int probe(struct buffer buf) {
     return 1;
   }
   if (index1 != INT_MIN) {
-    addr_table[first_free_index_addr_table] = address_table(hash_table[hash1][index1].head[0].rid, rid, key);
+    struct address_table new_entry;
+    new_entry.rid1 = hash_table[hash1][index1].head[0].rid;
+    new_entry.rid2 = rid;
+    new_entry.key = key;
+    addr_table[first_free_index_addr_table] = new_entry;
     first_free_index_addr_table++;
     return 1;
   }
