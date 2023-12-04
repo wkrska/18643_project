@@ -23,15 +23,13 @@ struct buffer {
   int key;
   int hash0;
   int hash1;
-
-  buffer(){};
-
-  buffer (int key, int rid, int hash0, int hash1) {
-    this->key = key;
-    this->rid = rid;
-    this->hash0 = hash0;
-    this->hash1 = hash1;
-  }
+  //buffer(){};
+  //buffer (int key, int rid, int hash0, int hash1) {
+  //  this->key = key;
+  //  this->rid = rid;
+  //  this->hash0 = hash0;
+  //  this->hash1 = hash1;
+  //}
 };
 
 struct table {

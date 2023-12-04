@@ -84,11 +84,21 @@ int main(int argc, char *argv[])
 
   for (int i = 1; i < t1_data.ydim; i++) {
     int key = t1_data.arr[i * t1_data.xdim + t1_join_column_index];
-    build(buffer(key, i, hash_function(0, key), hash_function(1, key)), 0);
+    struct buffer new_buf;
+    new_buf.key = key;
+    new_buf.rid = i;
+    new_buf.hash0 = hash_function(0, key);
+    new_buf.hash1 = hash_function(1, key);
+    build(new_buf, 0);
   }
   for (int i = 1; i < t2_data.ydim; i++) {
     int key = t2_data.arr[i * t2_data.xdim + t2_join_column_index];
-    probe(buffer(key, i, hash_function(0, key), hash_function(1, key)));
+    struct buffer new_buf;
+    new_buf.key = key;
+    new_buf.rid = i;
+    new_buf.hash0 = hash_function(0, key);
+    new_buf.hash1 = hash_function(1, key);
+    probe(new_buf);
   }
   print_addr_table();
   print_hash_table();
