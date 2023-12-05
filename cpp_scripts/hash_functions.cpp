@@ -32,16 +32,31 @@ uint32_t magic_int_hash(uint32_t val) {
 uint32_t hash32shift(uint32_t val) {
   int sval;
   sval = ~((int)val) + (((int)val) << 15);
-  //val = ~val + (val << 15);
   val = ((uint32_t)sval) ^ (((uint32_t)sval) >> 12);
-  //val = val ^ (val >>> 12);
   sval = ((int)val) + (((int)val) << 2);
-  //val = val + (val << 2);
   sval = ((uint32_t)sval) ^ (((uint32_t)sval) >> 4);
-  //val = val ^ (val >>> 4);
   sval = sval * 2057;
-  //val = val * 2057;
   val = ((uint32_t)sval) ^ (((uint32_t)sval) >> 16);
-  //val = val ^ (val >>> 16);
   return val; 
+}
+
+uint32_t jenkins32hash(uint32_t val) {
+  val = (val+0x7ed55d16) + (val<<12);
+  val = (val^0xc761c23c) ^ (val>>19);
+  val = (val+0x165667b1) + (val<<5);
+  val = (val+0xd3a2646c) ^ (val<<9);
+  val = (val+0xfd7046c5) + (val<<3);
+  val = (val^0xb55a4f09) ^ (val>>16);
+  return val;
+}
+
+uint32_t hash32shiftmult(uint32_t val) {
+  int sval;
+  uint32_t c2=0x27d4eb2d; // a prime or an odd constant
+  val = (val ^ 61) ^ (val >> 16);
+  sval = ((int)val) + (((int)val) << 3);
+  val = (uint32_t(sval)) ^ ((uint32_t(sval)) >> 4);
+  val = val * c2;
+  val = val ^ (val >> 15);
+  return val;
 }

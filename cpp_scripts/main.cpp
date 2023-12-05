@@ -126,5 +126,11 @@ int main(int argc, char *argv[])
 
   testing_hash = hash32shift(testing);
   std::cout << "testing hash32shift hash: " << testing_hash << std::endl;
+
+  testing_hash = jenkins32hash(testing);
+  std::cout << "testing jenkins32hash hash: " << testing_hash << std::endl;
+
+  testing_hash = hash32shiftmult(testing);
+  std::cout << "testing hash32shiftmult hash: " << testing_hash << std::endl;
 #endif
 }
