@@ -3,7 +3,10 @@
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
+#include <cstdint>
+
 #include "cuckoo_hash.h"
+#include "hash_functions.h"
 
 struct table_data_t {
   int *arr;
@@ -46,9 +49,12 @@ table_data_t parse_table_file(char *filename, int xdim, int ydim) {
 
   return table;
 }
- 
+
+#define HASHTEST
+
 int main(int argc, char *argv[])
 {
+#ifndef HASHTEST
   if (argc != 11) {
     std::cout << "ARGS ERROR" << std::endl;
     std::cout << "./main <t1_filename> <t1_xdim> <t1_ydim> <t2_filename> <t2_xdim> <t2_ydim> <t3_filename> <t3_xdim> <t3_ydim> <join_column_value>" << std::endl;
@@ -103,4 +109,11 @@ int main(int argc, char *argv[])
   print_addr_table();
   print_hash_table();
   return 0;
+#endif
+
+#ifdef HASHTEST
+  uint32_t testing = 42069;
+  uint32_t testing_hash = djb2(&testing, 1);
+  std::cout << "testing hash: " << testing_hash << std::endl;
+#endif
 }
