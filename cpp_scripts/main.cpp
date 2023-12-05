@@ -113,6 +113,7 @@ int main(int argc, char *argv[])
 
 #ifdef HASHTEST
   uint32_t testing = 42069;
+  //int testing_signed = 42069;
 
   uint32_t testing_hash = djb2(&testing, 1);
   std::cout << "testing djb2 hash: " << testing_hash << std::endl;
@@ -122,5 +123,8 @@ int main(int argc, char *argv[])
 
   testing_hash = magic_int_hash(testing);
   std::cout << "testing magic int hash: " << testing_hash << std::endl;
+
+  testing_hash = hash32shift(testing);
+  std::cout << "testing hash32shift hash: " << testing_hash << std::endl;
 #endif
 }
