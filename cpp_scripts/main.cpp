@@ -3,7 +3,10 @@
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
+#include <cstdint>
+
 #include "cuckoo_hash.h"
+#include "hash_functions.h"
 
 struct table_data_t {
   int *arr;
@@ -12,9 +15,13 @@ struct table_data_t {
 };
 
 void print_table_data(table_data_t t) {
+  printf("====================\n");
   for (int i = 0; i < t.ydim; i++) {
     for (int j = 0; j < t.xdim; j++) {
       printf("%3d ", t.arr[i * t.xdim + j]);
+    }
+    if (i == 0) {
+      printf("\n====================");
     }
     printf("\n");
   }
@@ -42,9 +49,12 @@ table_data_t parse_table_file(char *filename, int xdim, int ydim) {
 
   return table;
 }
- 
+
+#define HASHTEST
+
 int main(int argc, char *argv[])
 {
+#ifndef HASHTEST
   if (argc != 11) {
     std::cout << "ARGS ERROR" << std::endl;
     std::cout << "./main <t1_filename> <t1_xdim> <t1_ydim> <t2_filename> <t2_xdim> <t2_ydim> <t3_filename> <t3_xdim> <t3_ydim> <join_column_value>" << std::endl;
@@ -80,13 +90,47 @@ int main(int argc, char *argv[])
 
   for (int i = 1; i < t1_data.ydim; i++) {
     int key = t1_data.arr[i * t1_data.xdim + t1_join_column_index];
-    build(buffer(key, i, hash_function(0, key), hash_function(1, key)), 0);
+    struct buffer new_buf;
+    new_buf.key = key;
+    new_buf.rid = i;
+    new_buf.hash0 = hash_function(0, key);
+    new_buf.hash1 = hash_function(1, key);
+    build(new_buf, 0);
   }
   for (int i = 1; i < t2_data.ydim; i++) {
     int key = t2_data.arr[i * t2_data.xdim + t2_join_column_index];
-    probe(buffer(key, i, hash_function(0, key), hash_function(1, key)));
+    struct buffer new_buf;
+    new_buf.key = key;
+    new_buf.rid = i;
+    new_buf.hash0 = hash_function(0, key);
+    new_buf.hash1 = hash_function(1, key);
+    probe(new_buf);
   }
   print_addr_table();
-  // print_hash_table();
+  print_hash_table();
   return 0;
+#endif
+
+#ifdef HASHTEST
+  uint32_t testing = 42069;
+  //int testing_signed = 42069;
+
+  uint32_t testing_hash = djb2(&testing, 1);
+  std::cout << "testing djb2 hash: " << testing_hash << std::endl;
+
+  testing_hash = sbdm(&testing, 1);
+  std::cout << "testing sbdm hash: " << testing_hash << std::endl;
+
+  testing_hash = magic_int_hash(testing);
+  std::cout << "testing magic int hash: " << testing_hash << std::endl;
+
+  testing_hash = hash32shift(testing);
+  std::cout << "testing hash32shift hash: " << testing_hash << std::endl;
+
+  testing_hash = jenkins32hash(testing);
+  std::cout << "testing jenkins32hash hash: " << testing_hash << std::endl;
+
+  testing_hash = hash32shiftmult(testing);
+  std::cout << "testing hash32shiftmult hash: " << testing_hash << std::endl;
+#endif
 }

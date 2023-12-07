@@ -60,12 +60,20 @@ int probe(struct buffer buf) {
   int index1 = compare(hash1, key);
 
   if (index0 != INT_MIN) {
-    addr_table[first_free_index_addr_table] = address_table(hash_table[hash0][index0].head[0].rid, rid, key);
+    struct address_table new_entry;
+    new_entry.rid1 = hash_table[hash0][index0].head[0].rid;
+    new_entry.rid2 = rid;
+    new_entry.key = key;
+    addr_table[first_free_index_addr_table] = new_entry;
     first_free_index_addr_table++;
     return 1;
   }
   if (index1 != INT_MIN) {
-    addr_table[first_free_index_addr_table] = address_table(hash_table[hash1][index1].head[0].rid, rid, key);
+    struct address_table new_entry;
+    new_entry.rid1 = hash_table[hash1][index1].head[0].rid;
+    new_entry.rid2 = rid;
+    new_entry.key = key;
+    addr_table[first_free_index_addr_table] = new_entry;
     first_free_index_addr_table++;
     return 1;
   }
@@ -89,31 +97,56 @@ void build(struct buffer buf, int cnt) {
   int index1 = scan(hash1);
   
   if (index0 != INT_MIN) {
-    hash_table[hash0][index0] = table(1, hash1, buf, 0);
+    struct table new_table;
+    new_table.status = 1;
+    new_table.tag = hash1;
+    new_table.head[0] = buf;
+    hash_table[hash0][index0] = new_table;
   } else if (index1 != INT_MIN) {
-    hash_table[hash1][index1] = table(1, hash0, buf, 0);
+    struct table new_table;
+    new_table.status = 1;
+    new_table.tag = hash0;
+    new_table.head[0] = buf;
+    hash_table[hash1][index1] = new_table;
   } else {
     // try eviction, else chain stuff
     int is_evicted = 0;
     int i = 0;
-    while (i < R && is_evicted == 0) {
+    while (i < C && is_evicted == 0) {
       int free_slot = scan(hash_table[hash0][i].tag);
       if (free_slot != INT_MIN) {
-        hash_table[hash_table[hash0][i].tag][free_slot] = table(1, hash0, hash_table[hash0][i].head[0], 0);
-        hash_table[hash0][i] = table(1, hash1, buf, 0);
+	struct table new_table1;
+        new_table1.status = 1;
+        new_table1.tag = hash0;
+        new_table1.head[0] = hash_table[hash0][i].head[0];
+        hash_table[hash_table[hash0][i].tag][free_slot] = new_table1;
+	struct table new_table2;
+        new_table2.status = 1;
+        new_table2.tag = hash1;
+        new_table2.head[0] = buf;
+        hash_table[hash0][i] = new_table2;
         is_evicted = 1;
       }
       i++;
     }
     i = 0;
-    while (i < R && is_evicted == 0) {
+    while (i < C && is_evicted == 0) {
       int free_slot = scan(hash_table[hash1][i].tag);
       if (free_slot != INT_MIN) {
-        hash_table[hash_table[hash1][i].tag][free_slot] = table(1, hash1, hash_table[hash1][i].head[0], 0);
-        hash_table[hash_table[hash1][i].tag][free_slot].status = 1;
-        hash_table[hash_table[hash1][i].tag][free_slot].tag = hash1;
-        hash_table[hash1][i].tag = hash0;
-        hash_table[hash1][i].head[0] = buf;
+	struct table new_table1;
+        new_table1.status = 1;
+        new_table1.tag = hash1;
+        new_table1.head[0] = hash_table[hash1][i].head[0];
+        hash_table[hash_table[hash1][i].tag][free_slot] = new_table1;
+        // hash_table[hash_table[hash1][i].tag][free_slot].status = 1;
+        // hash_table[hash_table[hash1][i].tag][free_slot].tag = hash1;
+        // hash_table[hash1][i].tag = hash0;
+        // hash_table[hash1][i].head[0] = buf;
+	struct table new_table2;
+        new_table2.status = 1;
+        new_table2.tag = hash0;
+        new_table2.head[0] = buf;
+        hash_table[hash1][i] = new_table2;
         is_evicted = 1;
       }
       i++;
@@ -143,12 +176,12 @@ void print_addr_table() {
 
 void print_hash_table() {
   std::cout<<"\nHASH TABLE\n";
-printf("====================\n");
+  printf("====================\n");
   for (int i = 0; i < R; i++) {
     for (int j = 0; j < C; j++) {
       if (hash_table[i][j].status == 1) {
         std::cout<<hash_table[i][j].head[0].key;
-if (hash_table[i][j].head[0].key < 100 and hash_table[i][j].head[0].key > 9) {
+        if (hash_table[i][j].head[0].key < 100 and hash_table[i][j].head[0].key > 9) {
           std::cout<<" |";
         } else if (hash_table[i][j].head[0].key < 10) {
           std::cout<<"  |";
@@ -158,7 +191,7 @@ if (hash_table[i][j].head[0].key < 100 and hash_table[i][j].head[0].key > 9) {
       } else {
         std::cout<<"   |";
       }
-          }
+    }
     std::cout<<std::endl;
   }
   return;

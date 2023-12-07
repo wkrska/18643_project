@@ -26,7 +26,7 @@ def main(arguments):
         line_split = newline_removed.split('|')
         line_hashes = []
         for string in line_split[1:-1]:
-            string_hash = hashlib.sha256(string.encode('utf-8')).hexdigest()
+            string_hash = str(int(hashlib.sha256(string.encode('utf-8')).hexdigest()[:8], 16))
             line_hashes.append(string_hash)
         hashes = ''
         for individual_hash in line_hashes:
