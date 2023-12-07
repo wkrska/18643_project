@@ -1,0 +1,292 @@
+Breakpoint 1 at 0x40387b: file core.h, line 35.
+Breakpoint 2 at 0x413f65: file stages.h, line 262.
+To enable execution of this file add
+	add-auto-load-safe-path /ofs_install/oneapi/2023.2/compiler/2023.2.1/linux/lib/libsycl.so.6.2.0-gdb.py
+line to your configuration file "/home/wkrska/.config/gdb/gdbinit".
+To completely disable this security protection add
+	set auto-load safe-path /
+line to your configuration file "/home/wkrska/.config/gdb/gdbinit".
+For more information about this security protection see the
+"Auto-loading safe path" section in the GDB manual.  E.g., run from the shell:
+	info "(gdb)Auto-loading safe path"
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+Running on device: Intel(R) FPGA Emulation Device
+[Switching to Thread 0x7fffd5253640 (LWP 2156583)]
+h0   1 	h1   0
+Key   1 	BucketKey   1 	BucketFull 1 	s   0
+h0   2 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0   3 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0   4 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0   5 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0   6 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0   7 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0   8 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0   9 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  10 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  11 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  12 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  13 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  14 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  15 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  16 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  17 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  18 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  19 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  20 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  21 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  22 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  23 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  24 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  25 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  26 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  27 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  28 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  29 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  30 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+h0  31 	h1   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   0
+Key   1 	BucketKey   0 	BucketFull 0 	s   1
+Key   1 	BucketKey   0 	BucketFull 0 	s   2
+Key   1 	BucketKey   0 	BucketFull 0 	s   3
+
+
+Table 1
+Val | Col0 | 
+  0 |    0 | 
+  1 |    1 | 
+
+
+Table 1
+Val | Col0 | 
+  0 |    0 | 
+  1 |    1 | 
+  2 |    1 | 
+  3 |    1 | 
+  4 |    1 | 
+  5 |    1 | 
+  6 |    1 | 
+  7 |    1 | 
+  8 |    1 | 
+  9 |    1 | 
+ 10 |    1 | 
+ 11 |    1 | 
+ 12 |    1 | 
+ 13 |    1 | 
+ 14 |    1 | 
+ 15 |    1 | 
+ 16 |    1 | 
+ 17 |    1 | 
+ 18 |    1 | 
+ 19 |    1 | 
+ 20 |    1 | 
+ 21 |    1 | 
+ 22 |    1 | 
+ 23 |    1 | 
+ 24 |    1 | 
+ 25 |    1 | 
+ 26 |    1 | 
+ 27 |    1 | 
+ 28 |    1 | 
+ 29 |    1 | 
+ 30 |    1 | 
+ 31 |    1 | 
+
+
+Matched Outputs
+    | Key  |  V1  |  V2
+  0 |    1 |    1 |    1
+
+
+Unmappable Values
+    | Key  | Val
+
+
+Hash Table
+    | SL 0 | SL 1 | SL 2 | SL 3 | 
+  0 |    0 |    0 |    0 |    0 | 
+  1 |    1 |    0 |    0 |    0 | 
+  2 |    0 |    0 |    0 |    0 | 
+  3 |    0 |    0 |    0 |    0 | 
+  4 |    0 |    0 |    0 |    0 | 
+  5 |    0 |    0 |    0 |    0 | 
+  6 |    0 |    0 |    0 |    0 | 
+  7 |    0 |    0 |    0 |    0 | 
+  8 |    0 |    0 |    0 |    0 | 
+  9 |    0 |    0 |    0 |    0 | 
+ 10 |    0 |    0 |    0 |    0 | 
+ 11 |    0 |    0 |    0 |    0 | 
+ 12 |    0 |    0 |    0 |    0 | 
+ 13 |    0 |    0 |    0 |    0 | 
+ 14 |    0 |    0 |    0 |    0 | 
+ 15 |    0 |    0 |    0 |    0 | 
+ 16 |    0 |    0 |    0 |    0 | 
+ 17 |    0 |    0 |    0 |    0 | 
+ 18 |    0 |    0 |    0 |    0 | 
+ 19 |    0 |    0 |    0 |    0 | 
+ 20 |    0 |    0 |    0 |    0 | 
+ 21 |    0 |    0 |    0 |    0 | 
+ 22 |    0 |    0 |    0 |    0 | 
+ 23 |    0 |    0 |    0 |    0 | 
+ 24 |    0 |    0 |    0 |    0 | 
+ 25 |    0 |    0 |    0 |    0 | 
+ 26 |    0 |    0 |    0 |    0 | 
+ 27 |    0 |    0 |    0 |    0 | 
+ 28 |    0 |    0 |    0 |    0 | 
+ 29 |    0 |    0 |    0 |    0 | 
+ 30 |    0 |    0 |    0 |    0 | 
+ 31 |    0 |    0 |    0 |    0 | 
+ 32 |    0 |    0 |    0 |    0 | 
+ 33 |    0 |    0 |    0 |    0 | 
+ 34 |    0 |    0 |    0 |    0 | 
+ 35 |    0 |    0 |    0 |    0 | 
+ 36 |    0 |    0 |    0 |    0 | 
+ 37 |    0 |    0 |    0 |    0 | 
+ 38 |    0 |    0 |    0 |    0 | 
+ 39 |    0 |    0 |    0 |    0 | 
+ 40 |    0 |    0 |    0 |    0 | 
+ 41 |    0 |    0 |    0 |    0 | 
+ 42 |    0 |    0 |    0 |    0 | 
+ 43 |    0 |    0 |    0 |    0 | 
+ 44 |    0 |    0 |    0 |    0 | 
+ 45 |    0 |    0 |    0 |    0 | 
+ 46 |    0 |    0 |    0 |    0 | 
+ 47 |    0 |    0 |    0 |    0 | 
+ 48 |    0 |    0 |    0 |    0 | 
+ 49 |    0 |    0 |    0 |    0 | 
+ 50 |    0 |    0 |    0 |    0 | 
+ 51 |    0 |    0 |    0 |    0 | 
+ 52 |    0 |    0 |    0 |    0 | 
+ 53 |    0 |    0 |    0 |    0 | 
+ 54 |    0 |    0 |    0 |    0 | 
+ 55 |    0 |    0 |    0 |    0 | 
+ 56 |    0 |    0 |    0 |    0 | 
+ 57 |    0 |    0 |    0 |    0 | 
+ 58 |    0 |    0 |    0 |    0 | 
+ 59 |    0 |    0 |    0 |    0 | 
+ 60 |    0 |    0 |    0 |    0 | 
+ 61 |    0 |    0 |    0 |    0 | 
+ 62 |    0 |    0 |    0 |    0 | 
+ 63 |    0 |    0 |    0 |    0 | 
+
+
+Phase       | Interval (clocks)
+Build Phase | 1
+Probe Phase | 615008
+[Inferior 1 (process 2156572) exited normally]

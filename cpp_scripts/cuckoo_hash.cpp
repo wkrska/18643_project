@@ -91,7 +91,7 @@ void build(struct buffer buf, int cnt) {
   if (index0 != INT_MIN) {
     hash_table[hash0][index0] = table(1, hash1, buf, 0);
   } else if (index1 != INT_MIN) {
-    hash_table[hash0][index0] = table(1, hash0, buf, 0);
+    hash_table[hash1][index1] = table(1, hash0, buf, 0);
   } else {
     // try eviction, else chain stuff
     int is_evicted = 0;
@@ -143,15 +143,22 @@ void print_addr_table() {
 
 void print_hash_table() {
   std::cout<<"\nHASH TABLE\n";
+printf("====================\n");
   for (int i = 0; i < R; i++) {
     for (int j = 0; j < C; j++) {
       if (hash_table[i][j].status == 1) {
         std::cout<<hash_table[i][j].head[0].key;
+if (hash_table[i][j].head[0].key < 100 and hash_table[i][j].head[0].key > 9) {
+          std::cout<<" |";
+        } else if (hash_table[i][j].head[0].key < 10) {
+          std::cout<<"  |";
+        } else {
+          std::cout<<"|";
+        }
       } else {
-        std::cout<<" ";
+        std::cout<<"   |";
       }
-      std::cout<<" | ";
-    }
+          }
     std::cout<<std::endl;
   }
   return;

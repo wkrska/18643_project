@@ -2,3 +2,5 @@
 */Emulation-SW
 .metadata/
 vitis_pid*
+*.swp
+build/
