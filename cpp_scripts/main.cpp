@@ -50,7 +50,7 @@ table_data_t parse_table_file(char *filename, int xdim, int ydim) {
   return table;
 }
 
-#define HASHTEST
+//#define HASHTEST
 
 int main(int argc, char *argv[])
 {
@@ -109,11 +109,8 @@ int main(int argc, char *argv[])
   print_addr_table();
   print_hash_table();
   return 0;
-#endif
-
-#ifdef HASHTEST
+#else
   uint32_t testing = 42069;
-  //int testing_signed = 42069;
 
   uint32_t testing_hash = djb2(&testing, 1);
   std::cout << "testing djb2 hash: " << testing_hash << std::endl;

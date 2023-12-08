@@ -1,0 +1,3 @@
+python3 preprocess.py --infile out_less_32.txt --outfile out_less_32_unique.txt --parse-stage unique --join-column 2
+
+python3 preprocess.py --infile out_less_32.txt --outfile out_less_32_unique.txt --parse-stage unique --join-column 3 --num-rows 50
