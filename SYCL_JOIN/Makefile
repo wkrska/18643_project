@@ -4,8 +4,8 @@ JOINF = build/join_$(VERSION)_fpga_$(SEED)_$(MHZ)_$(BKTS)$(SLTS)
 JOINH = build/join_$(VERSION)_hw_$(SEED)_$(MHZ)_$(BKTS)$(SLTS)
 
 # Compilation Parameters
-BKTS = -D_BKTS_=16
-SLTS = -D_SLTS_=16
+BKTS = -D_BKTS_=64
+SLTS = -D_SLTS_=4
 CONFIG = $(BKTS) $(SLTS) -w
 
 # Runtime Parameters
@@ -29,7 +29,7 @@ ARGS = $(TB1X) $(TB1Y) $(TB2X) $(TB2Y) $(DSRC0) $(DSRC0) $(CJOIN) $(DDSEL) $(HAS
 TARGET = $(OFS_BSP_BASE):ofs_n6001
 MHZ = 650MHz
 
-SEED = 0
+SEED = 2
 
 EARLY = -fsycl-link=early
 SIMULATE = $(CONFIG) -DFPGA_EMULATOR=1 -fsycl -fintelfpga -qactypes -Wall -Wextra -g -O0
@@ -56,16 +56,6 @@ fpga:
 
 link:
 	icpx $(CONFIG) $(SYNTHESIS) $(EARLY) $(JOINSRC) -o $(JOINH)
-
-fpga_batch_a:
-	time icpx -D_BKTS_=64 -D_SLTS_=2 -w $(SYNTHESIS) $(JOINSRC) -o build/join_$(VERSION)_fpga_$(SEED)_$(MHZ)_-D_BKTS_=64-D_SLTS_=2
-	time icpx -D_BKTS_=32 -D_SLTS_=2 -w $(SYNTHESIS) $(JOINSRC) -o build/join_$(VERSION)_fpga_$(SEED)_$(MHZ)_-D_BKTS_=32-D_SLTS_=2
-	time icpx -D_BKTS_=16 -D_SLTS_=2 -w $(SYNTHESIS) $(JOINSRC) -o build/join_$(VERSION)_fpga_$(SEED)_$(MHZ)_-D_BKTS_=16-D_SLTS_=2
-
-fpga_batch_b:
-	time icpx -D_BKTS_=16 -D_SLTS_=8 -w $(SYNTHESIS) $(JOINSRC) -o build/join_$(VERSION)_fpga_$(SEED)_$(MHZ)_-D_BKTS_=16-D_SLTS_=8
-	time icpx -D_BKTS_=32 -D_SLTS_=4 -w $(SYNTHESIS) $(JOINSRC) -o build/join_$(VERSION)_fpga_$(SEED)_$(MHZ)_-D_BKTS_=32-D_SLTS_=4
-	time icpx -D_BKTS_=16 -D_SLTS_=4 -w $(SYNTHESIS) $(JOINSRC) -o build/join_$(VERSION)_fpga_$(SEED)_$(MHZ)_-D_BKTS_=16-D_SLTS_=4
 
 
 ############# misc ##################
