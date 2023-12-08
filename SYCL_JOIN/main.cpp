@@ -69,26 +69,11 @@ void parse_table_file(JoinKey *table, char *filename, int xdim, int ydim) {
       fileStream >> holder;
       if (j != 0) {
         table[i * xdim + j - 1] = holder;
-	printf("%u ", holder);
       }
     }
-    printf("\n");
   }
   fileStream.close();
-  printf("\n");
   return;
-}
-
-void print_table_file(JoinKey *table, int xdim, int ydim) {
-  std::cout << "PRINT_TABLE_FILE" << std::endl;
-  for (int i = 0; i < ydim; i++) {
-    for (int j = 0; j < xdim; j++) {
-      //std::cout << table[i*xdim + j] << std::endl;
-      printf("%u ", table[i*xdim+j]);
-    }
-    printf("\n");
-  }
-  printf("\n");
 }
 
 int main(int argc, char *argv[]) {
@@ -211,10 +196,6 @@ int main(int argc, char *argv[]) {
     std::cout<<"\nJoin on the column named "<<argv[7]<<std::endl<<"First row is the column names\n";
     parse_table_file(t1_data_host, argv[5], t1_xdim, t1_ydim);
     parse_table_file(t2_data_host, argv[6], t2_xdim, t2_ydim);
-
-    print_table_file(t1_data_host, t1_xdim, t1_ydim);
-    print_table_file(t2_data_host, t2_xdim, t2_ydim);
-
     // Locate the data
     for (int i = 0; i < t1_xdim; i++)
       if (t1_data_host[i] == (JoinKey) join_column_value)
@@ -223,7 +204,8 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < t2_xdim; i++)
       if (t2_data_host[i] == (JoinKey) join_column_value)
         t2_join_column_index = i;
-  } else {// generate dummy data on device for minimized latency, generate same data here for comparison
+  } 
+  if (data_src_sel > 0) {// generate dummy data on device for minimized latency, generate same data here for comparison
     int t1_join_column_index = 0;
     int t2_join_column_index = 0;
     srand(0);
@@ -255,8 +237,6 @@ int main(int argc, char *argv[]) {
     c1_data_host[i] = t1_data_host[i*t1_xdim+t1_join_column_index];
   for (int i = 0; i < t2_ydim; i++)
     c2_data_host[i] = t2_data_host[i*t2_xdim+t2_join_column_index];
-  
-
   //////////////////////
   // Set up and prepare device memory
   //////////////////////
@@ -279,7 +259,7 @@ int main(int argc, char *argv[]) {
   // Zero out buffers
   for (int i = 0; i < t1_ydim+t2_ydim; i++) MatchedOutput_host[i].valid = 0;
   for (int i = 0; i < t1_ydim; i++) UnmappedOutput_host[i].valid = 0;
-
+  
   // Copy data from host to device
   q.memcpy(c1_data_device, c1_data_host, t1_ydim * sizeof(JoinKey));
   q.memcpy(c2_data_device, c2_data_host, t2_ydim * sizeof(JoinKey));
@@ -452,6 +432,35 @@ int main(int argc, char *argv[]) {
   ev2.wait();
   ev3.wait();
 
+  // for some unknown reason, execution has been seg-faulting here. Added try-catches to make sure we get our performance nums, also reordered to make sure we get the important information first
+  // Print out timing info.
+  printf("\n\nPhase       | Interval (clocks)\n");
+  printf("Build Phase | %lld\n", ClockCounter_host[0]); 
+  printf("Probe Phase | %lld\n", ClockCounter_host[1]);
+
+  // Print out all matched values
+  printf("\n\nMatched Outputs\n");
+  printf("    | Key  |  V1  |  V2\n");
+  for(int i = 0; i < t1_ydim+t2_ydim; i++) {
+    if (MatchedOutput_host[i].valid) {
+      printf("%3u | %4u | %4u | %4u\n", i, MatchedOutput_host[i].key, MatchedOutput_host[i].val0, MatchedOutput_host[i].val1);
+    }
+  }
+
+  // Print out all hashed values
+  printf("\n\nHash Table\n");
+  printf("    | ");
+  for (int s = 0; s < _SLTS_; s++)
+    printf("SL %1u | ", s);
+  printf("\n");
+  // Stream ot hash table for debugging reasons
+  for (int b = 0; b < _BKTS_; b++) {
+    printf("%3u | ",b);
+    for (int s = 0; s < _SLTS_; s++)
+      printf("%4u | ", HashedOutput_device[b*_SLTS_+s].key);
+    printf("\n");
+  }
+
   // Print out input tables
   printf("\n\nTable 1\n");
   printf("Val | ");
@@ -462,18 +471,6 @@ int main(int argc, char *argv[]) {
     printf("%3u | ",r);
     for (int c = 0; c < t1_xdim; c++)
       printf("%4u | ", t1_data_host[r*t1_xdim+c]);
-    printf("\n");
-  }
-
-  // print key histogram
-  printf("\n\n\nTable 2 Histogram\n");
-  int buckets[(_BKTS_/4)] = {};
-  for (int r = 0; r < t2_ydim; r++)
-    buckets[t2_data_host[r*t2_xdim+t2_join_column_index]/(t1_ydim/(_BKTS_/4))]++;
-  for (int i = 0; i < (_BKTS_/4); i++) {
-    printf("[%4d,%4d): %3d | ", (i*t1_ydim)/(_BKTS_/4), ((i+1)*t1_ydim)/(_BKTS_/4)-1, buckets[i]);
-    for (int p = 0; p < buckets[i]; p++)
-      printf("*");
     printf("\n");
   }
 
@@ -489,16 +486,28 @@ int main(int argc, char *argv[]) {
     printf("\n");
   }
 
-  // Print out all matched values
-  printf("\n\nMatched Outputs\n");
-  printf("    | Key  |  V1  |  V2\n");
-  for(int i = 0; i < t1_ydim+t2_ydim; i++) {
-    if (MatchedOutput_host[i].valid) {
-      printf("%3u | %4u | %4u | %4u\n", i, MatchedOutput_host[i].key, MatchedOutput_host[i].val0, MatchedOutput_host[i].val1);
+  // print key histogram
+  printf("\n\n\nTable 2 Histogram (bounded to what aligns with table 1\n");
+  // int buckets[(_BKTS_/4)] = {};
+  // for (int r = 0; r < t2_ydim; r++)
+  //   buckets[t2_data_host[r*t2_xdim+t2_join_column_index]/(t1_ydim/(_BKTS_/4))]++;
+  // for (int i = 0; i < (_BKTS_/4); i++) {
+  //   printf("[%4d,%4d): %3d | ", (i*t1_ydim)/(_BKTS_/4), ((i+1)*t1_ydim)/(_BKTS_/4)-1, buckets[i]);
+  //   for (int p = 0; p < buckets[i]; p++)
+  //     printf("*");
+  //   printf("\n");
+  // }
+  for (int a = 0; a < t1_ydim; a++) {
+    printf("%3d |",c1_data_host[a]);
+    for (int b = 0; b < t2_ydim; b++) {
+      if (c2_data_host[b]==c1_data_host[a]) {
+        printf("*");
+      }
     }
+    printf("\n");
   }
-
-  // Print out all all unmatched values
+  
+  // Print out all unmatched values
   printf("\n\nUnmappable Values\n");
   printf("    | Key  | Val\n");
   for(int i = 0; i < t1_ydim; i++) {
@@ -506,27 +515,6 @@ int main(int argc, char *argv[]) {
       printf("%3u | %4u | %4u\n", i, UnmappedOutput_host[i].key, UnmappedOutput_host[i].val);
     }
   }
-
-  // Print out all all unmatched values
-  printf("\n\nHash Table\n");
-  printf("    | ");
-  for (int s = 0; s < _SLTS_; s++)
-    printf("SL %1u | ", s);
-  printf("\n");
-  // Stream ot hash table for debugging reasons
-  for (int b = 0; b < _BKTS_; b++) {
-    printf("%3u | ",b);
-    for (int s = 0; s < _SLTS_; s++)
-      printf("%4u | ", HashedOutput_device[b*_SLTS_+s].key);
-    printf("\n");
-  }
-
-  // Print out timing info.
-  printf("\n\nPhase       | Interval (clocks)\n");
-  printf("Build Phase | %lld\n", ClockCounter_host[0]); 
-  printf("Probe Phase | %lld\n", ClockCounter_host[1]);
-
-  // fflush(stdout);
-
+  
   return 0;
 }

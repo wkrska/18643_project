@@ -1,11 +1,11 @@
 # Name Parameters
-VERSION = v4
+VERSION = v5
 JOINF = build/join_$(VERSION)_fpga_$(SEED)_$(MHZ)_$(BKTS)$(SLTS)
 JOINH = build/join_$(VERSION)_hw_$(SEED)_$(MHZ)_$(BKTS)$(SLTS)
 
 # Compilation Parameters
-BKTS = -D_BKTS_=64
-SLTS = -D_SLTS_=4
+BKTS = -D_BKTS_=16
+SLTS = -D_SLTS_=16
 CONFIG = $(BKTS) $(SLTS) -w
 
 # Runtime Parameters
@@ -19,7 +19,7 @@ TB1X = 1
 TB1Y = 128
 TB2X = 1
 TB2Y = 1024
-DDSEL = 5
+DDSEL = 1
 ## Both
 HASH = 0
 
@@ -39,6 +39,10 @@ CXX = $(CONFIG) -DCXXONLY -std=c++1y -g -O0 #-Wall
 
 JOINSRC = main.cpp
 
+debug :
+	icpx $(CONFIG) $(SIMULATE) $(JOINSRC) -o build/join_sim
+	gdb --batch --command=debug.gdb --args build/join_sim $(ARGS) > debug.txt
+
 sim:
 	icpx $(CONFIG) $(SIMULATE) $(JOINSRC) -o build/join_sim
 	build/join_sim $(ARGS) > test$(HASH).txt
@@ -52,6 +56,17 @@ fpga:
 
 link:
 	icpx $(CONFIG) $(SYNTHESIS) $(EARLY) $(JOINSRC) -o $(JOINH)
+
+fpga_batch_a:
+	time icpx -D_BKTS_=64 -D_SLTS_=2 -w $(SYNTHESIS) $(JOINSRC) -o build/join_$(VERSION)_fpga_$(SEED)_$(MHZ)_-D_BKTS_=64-D_SLTS_=2
+	time icpx -D_BKTS_=32 -D_SLTS_=2 -w $(SYNTHESIS) $(JOINSRC) -o build/join_$(VERSION)_fpga_$(SEED)_$(MHZ)_-D_BKTS_=32-D_SLTS_=2
+	time icpx -D_BKTS_=16 -D_SLTS_=2 -w $(SYNTHESIS) $(JOINSRC) -o build/join_$(VERSION)_fpga_$(SEED)_$(MHZ)_-D_BKTS_=16-D_SLTS_=2
+
+fpga_batch_b:
+	time icpx -D_BKTS_=16 -D_SLTS_=8 -w $(SYNTHESIS) $(JOINSRC) -o build/join_$(VERSION)_fpga_$(SEED)_$(MHZ)_-D_BKTS_=16-D_SLTS_=8
+	time icpx -D_BKTS_=32 -D_SLTS_=4 -w $(SYNTHESIS) $(JOINSRC) -o build/join_$(VERSION)_fpga_$(SEED)_$(MHZ)_-D_BKTS_=32-D_SLTS_=4
+	time icpx -D_BKTS_=16 -D_SLTS_=4 -w $(SYNTHESIS) $(JOINSRC) -o build/join_$(VERSION)_fpga_$(SEED)_$(MHZ)_-D_BKTS_=16-D_SLTS_=4
+
 
 ############# misc ##################
 
