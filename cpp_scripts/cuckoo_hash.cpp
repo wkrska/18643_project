@@ -193,6 +193,20 @@ void print_hash_table() {
   return;
 }
 
+void evaluate_hash_table() {
+  //std::cout << "\nHASH EVAL START\n" << std::endl;
+  for (int i = 0; i < R; i++) {
+    int occupancy = 0;
+    for (int j = 0; j < C; j++) {
+      if (hash_table[i][j].status == 1) {
+        occupancy++;
+      }
+    }
+    std::cout << "row[" << i << "] occupancy: " << occupancy << std::endl;  
+  }
+  return;
+}
+
 int find_free_collision_list_spot (struct buffer buf[]) {
   for (int i = 0; i < R; i++) {
     if (buf[i].key == INT_MIN) {

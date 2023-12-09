@@ -34,7 +34,7 @@ void print_table_data(table_data_t t) {
 }
 
 table_data_t parse_table_file(char *filename, int xdim, int ydim) {
-  std::cout << filename << " xdim: " << xdim << ", ydim: " << ydim << std::endl;
+  //std::cout << filename << " xdim: " << xdim << ", ydim: " << ydim << std::endl;
   int *arr = (int *) malloc(xdim * ydim * sizeof(int));
   std::fstream fileStream;
   fileStream.open(filename);
@@ -68,18 +68,18 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  std::cout << "\nJoin on the column named " << argv[7] << std::endl;
+  //std::cout << "\nJoin on the column named " << argv[7] << std::endl;
   int t1_xdim = strtoul(argv[2], nullptr, 0);
   int t1_ydim = strtoul(argv[3], nullptr, 0);
   table_data_t t1_data = parse_table_file(argv[1], t1_xdim, t1_ydim);
-  std::cout << "TABLE 1" << std::endl;
-  print_table_data(t1_data);
+  //std::cout << "TABLE 1" << std::endl;
+  //print_table_data(t1_data);
 
   int t2_xdim = strtoul(argv[5], nullptr, 0);
   int t2_ydim = strtoul(argv[6], nullptr, 0);
   table_data_t t2_data = parse_table_file(argv[4], t2_xdim, t2_ydim);
-  std::cout << "TABLE 2" << std::endl;
-  print_table_data(t2_data);
+  //std::cout << "TABLE 2" << std::endl;
+  //print_table_data(t2_data);
 
   int join_column_value = strtoul(argv[7], nullptr, 0);
   int t1_join_column_index;
@@ -94,9 +94,6 @@ int main(int argc, char *argv[])
       t2_join_column_index = i;
     }
   }
-
-  std::cout << "t1_join_column_index: " << t1_join_column_index << std::endl;
-  std::cout << "t2_join_column_index: " << t2_join_column_index << std::endl;
 
   for (int i = 1; i < t1_data.ydim; i++) {
     int key = t1_data.arr[i * t1_data.xdim + t1_join_column_index];
@@ -118,8 +115,9 @@ int main(int argc, char *argv[])
     probe(new_buf);
   }
 
-  print_addr_table();
-  print_hash_table();
+  //print_addr_table();
+  //print_hash_table();
+  evaluate_hash_table();
   return 0;
 #else
   int testing = 42069;

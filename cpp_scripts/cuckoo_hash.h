@@ -33,4 +33,5 @@ int probe(struct buffer buf);
 void build(struct buffer buf, int cnt);
 void print_addr_table();
 void print_hash_table();
+void evaluate_hash_table();
 int find_free_collision_list_spot (struct buffer buf[]);
