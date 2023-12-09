@@ -15,3 +15,7 @@ python3 preprocess.py --infile out_all.txt --outfile out_all_5.txt --parse-stage
 python3 preprocess.py --infile out_all.txt --outfile out_all_6.txt --parse-stage unique --join-column 6 --num-rows 2000
 python3 preprocess.py --infile out_all.txt --outfile out_all_7.txt --parse-stage unique --join-column 7 --num-rows 2000
 python3 preprocess.py --infile out_all.txt --outfile out_all_8.txt --parse-stage unique --join-column 8 --num-rows 2000
+
+
+
+python3 characterize_hash.py --infile /home/18643_team/edwin_stuff/18643_project/cpp_scripts/2000_table1_col1_modulo_div.txt

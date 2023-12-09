@@ -1,9 +1,9 @@
 #include <iostream>
 #include <climits>
 #define R 16 // number of rows in a hash table
-#define C 1000  // number of slots in a row
-#define MAX 1000 // max number of time of hashing, for cycle detection
-#define SIZE 1000
+#define C 2000  // number of slots in a row
+#define MAX 2000 // max number of time of hashing, for cycle detection
+#define SIZE 2000
 // size of the address table
 
 struct address_table {

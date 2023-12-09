@@ -1,0 +1,16 @@
+row[0] occupancy: 133
+row[1] occupancy: 120
+row[2] occupancy: 124
+row[3] occupancy: 111
+row[4] occupancy: 139
+row[5] occupancy: 144
+row[6] occupancy: 117
+row[7] occupancy: 132
+row[8] occupancy: 104
+row[9] occupancy: 112
+row[10] occupancy: 141
+row[11] occupancy: 127
+row[12] occupancy: 128
+row[13] occupancy: 136
+row[14] occupancy: 114
+row[15] occupancy: 118

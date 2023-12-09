@@ -1,5 +1,10 @@
 #include <cstdint>
 
+// Rough estimate of computational complexity of different hash functions
+
+// Increasing order of computational complexity (# of operations):
+// modulo -> div -> 
+
 // This one is also meant to work on strings
 uint32_t djb2(uint32_t *val, uint32_t len) {
   uint32_t hash = 5381;
