@@ -1,17 +1,29 @@
 #include <cstdint>
 
-// Rough estimate of computational complexity of different hash functions
+// Rough estimate of computational complexity of different hash functions (based on Intel Skylake latencies)
+// bitwise                    1
+// add/sub (addsd, subsd)     4
+// multiply (mulsd)           4
+// divide (divsd)         13-14
+// sqrt (sqrtpd)          15-16
+//
+// modulo         : 1 x bitwise (modulo power of 2)                    = 1
+// div            : 2 x bitwise (modulo power of 2 and div power of 2) = 2
+// djb2           : 1 x bitwise + 2 * add/sub                          = 9
+// magic_int_hash : 6 x bitwise + 2 * multiply                         = 14
+// hash32shift    : 
 
 // Increasing order of computational complexity (# of operations):
 // modulo -> div -> 
 
 // This one is also meant to work on strings
-uint32_t djb2(uint32_t *val, uint32_t len) {
+uint32_t djb2(uint32_t val) {
   uint32_t hash = 5381;
 
-  for (uint32_t i = 0; i < len; i++) {
-    hash = ((hash << 5) + hash) + val[i];
-  }
+  //for (uint32_t i = 0; i < len; i++) {
+  //  hash = ((hash << 5) + hash) + val[i];
+  //}
+  hash = ((hash << 5) + hash) + val;
 
   return hash;
 }
