@@ -9,57 +9,57 @@
         stream out
 */
 
-uint32_t first_free_index_addr_table = 0;
+int first_free_index_addr_table = 0;
 struct address_table addr_table[SIZE];
 struct table hash_table[R][C];
 
-uint32_t hash_function(uint32_t function, uint32_t key) {
+int hash_function(int function, int key) {
   switch (function) {
     case 0: return key % R;
     case 1: return (key / R) % R;
   }
-  return 0; // illegal
+  return INT_MIN; // illegal
 }
 
 
-uint32_t scan(uint32_t row) {
+int scan(int row) {
   /*
   purpose: find the first free slot of a given row/bucket
            return INT_MIN if all slots are full
   */
 
-  for (uint32_t i = 0; i < C; i++) {
+  for (int i = 0; i < C; i++) {
     if (hash_table[row][i].status == 0) {
       return i;
     }
   }
-  return 0;
+  return INT_MIN;
 }
 
-uint32_t compare(uint32_t row, uint32_t key) {
+int compare(int row, int key) {
   /*
   purpose: check if the given key is present in the given row
   
   */
-  for (uint32_t i = 0; i < C; i++) {
+  for (int i = 0; i < C; i++) {
     if (hash_table[row][i].status == 1) {
       if (hash_table[row][i].head[0].key == key) {
         return i;
       }
     }
   }
-  return 0;
+  return INT_MIN;
 }
 
-uint32_t probe(struct buffer buf) {
-  uint32_t key = buf.key;
-  uint32_t rid = buf.rid;
-  uint32_t hash0 = buf.hash0;
-  uint32_t hash1 = buf.hash1;
-  uint32_t index0 = compare(hash0, key);
-  uint32_t index1 = compare(hash1, key);
+int probe(struct buffer buf) {
+  int key = buf.key;
+  int rid = buf.rid;
+  int hash0 = buf.hash0;
+  int hash1 = buf.hash1;
+  int index0 = compare(hash0, key);
+  int index1 = compare(hash1, key);
 
-  if (index0 != 0) {
+  if (index0 != INT_MIN) {
     struct address_table new_entry;
     new_entry.rid1 = hash_table[hash0][index0].head[0].rid;
     new_entry.rid2 = rid;
@@ -68,7 +68,7 @@ uint32_t probe(struct buffer buf) {
     first_free_index_addr_table++;
     return 1;
   }
-  if (index1 != 0) {
+  if (index1 != INT_MIN) {
     struct address_table new_entry;
     new_entry.rid1 = hash_table[hash1][index1].head[0].rid;
     new_entry.rid2 = rid;
@@ -77,10 +77,10 @@ uint32_t probe(struct buffer buf) {
     first_free_index_addr_table++;
     return 1;
   }
-  return 0;
+  return INT_MIN;
 }
 
-void build(struct buffer buf, uint32_t cnt) {
+void build(struct buffer buf, int cnt) {
   
   if (cnt == MAX) {
     // cnt counts how many times this function has been called
@@ -91,18 +91,18 @@ void build(struct buffer buf, uint32_t cnt) {
 
   // int key = buf.key;
   // int rid = buf.rid;
-  uint32_t hash0 = buf.hash0;
-  uint32_t hash1 = buf.hash1;
-  uint32_t index0 = scan(hash0);
-  uint32_t index1 = scan(hash1);
+  int hash0 = buf.hash0;
+  int hash1 = buf.hash1;
+  int index0 = scan(hash0);
+  int index1 = scan(hash1);
   
-  if (index0 != 0) {
+  if (index0 != INT_MIN) {
     struct table new_table;
     new_table.status = 1;
     new_table.tag = hash1;
     new_table.head[0] = buf;
     hash_table[hash0][index0] = new_table;
-  } else if (index1 != 0) {
+  } else if (index1 != INT_MIN) {
     struct table new_table;
     new_table.status = 1;
     new_table.tag = hash0;
@@ -110,11 +110,11 @@ void build(struct buffer buf, uint32_t cnt) {
     hash_table[hash1][index1] = new_table;
   } else {
     // try eviction, else chain stuff
-    uint32_t is_evicted = 0;
-    uint32_t i = 0;
+    int is_evicted = 0;
+    int i = 0;
     while (i < C && is_evicted == 0) {
-      uint32_t free_slot = scan(hash_table[hash0][i].tag);
-      if (free_slot != 0) {
+      int free_slot = scan(hash_table[hash0][i].tag);
+      if (free_slot != INT_MIN) {
 	struct table new_table1;
         new_table1.status = 1;
         new_table1.tag = hash0;
@@ -131,8 +131,8 @@ void build(struct buffer buf, uint32_t cnt) {
     }
     i = 0;
     while (i < C && is_evicted == 0) {
-      uint32_t free_slot = scan(hash_table[hash1][i].tag);
-      if (free_slot != 0) {
+      int free_slot = scan(hash_table[hash1][i].tag);
+      if (free_slot != INT_MIN) {
 	struct table new_table1;
         new_table1.status = 1;
         new_table1.tag = hash1;
@@ -149,7 +149,7 @@ void build(struct buffer buf, uint32_t cnt) {
     }
     if (is_evicted == 0) {
       // ideally this does not happen
-      uint32_t ind = find_free_collision_list_spot(hash_table[hash0][index0].head);
+      int ind = find_free_collision_list_spot(hash_table[hash0][index0].head);
       hash_table[hash0][index0].head[ind] = buf;
     }
   }
@@ -157,15 +157,15 @@ void build(struct buffer buf, uint32_t cnt) {
 }
 
 void print_addr_table() {
-  uint32_t key, rid1, rid2;
+  int key, rid1, rid2;
   std::cout<<"\nADDR TABLE\n";
-  for (uint32_t i = 0; i < SIZE; i++) {
+  for (int i = 0; i < SIZE; i++) {
     key = addr_table[i].key;
     rid1 = addr_table[i].rid1;;
     rid2 = addr_table[i].rid2;;
-    //if (key != 0) {
+    if (key != INT_MIN) {
       std::cout<<"Key: "<<key<<" rid1: "<<rid1<<" rid2: "<<rid2<<"\n";
-    //}
+    }
   }
   return;
 }
@@ -173,8 +173,8 @@ void print_addr_table() {
 void print_hash_table() {
   std::cout<<"\nHASH TABLE\n";
   //printf("====================\n");
-  //for (uint32_t i = 0; i < R; i++) {
-  //  for (uint32_t j = 0; j < C; j++) {
+  //for (int i = 0; i < R; i++) {
+  //  for (int j = 0; j < C; j++) {
   //    if (hash_table[i][j].status == 1) {
   //      std::cout<<hash_table[i][j].head[0].key;
   //      if (hash_table[i][j].head[0].key < 100 and hash_table[i][j].head[0].key > 9) {
@@ -193,11 +193,11 @@ void print_hash_table() {
   return;
 }
 
-uint32_t find_free_collision_list_spot (struct buffer buf[]) {
-  for (uint32_t i = 0; i < R; i++) {
-    if (buf[i].key == 0) {
+int find_free_collision_list_spot (struct buffer buf[]) {
+  for (int i = 0; i < R; i++) {
+    if (buf[i].key == INT_MIN) {
       return i;
     }
   }
-  return 0;
+  return INT_MIN;
 }

@@ -8,7 +8,7 @@ import random
 
 
 def rand_unique(unique_keys):
-    rand_try = str(random.randrange(0, 4294967295))
+    rand_try = str(random.randrange(0, 2147483647))
     if rand_try in unique_keys:
         return rand_unique(unique_keys)
     else:
@@ -39,7 +39,7 @@ def main(arguments):
             line_split = newline_removed.split('|')
             line_hashes = []
             for string in line_split[1:-1]:
-                string_hash = str(int(hashlib.sha256(string.encode('utf-8')).hexdigest()[:8], 16))
+                string_hash = str(int(hashlib.sha256(string.encode('utf-8')).hexdigest()[:7], 16))
                 line_hashes.append(string_hash)
             hashes = ''
             for individual_hash in line_hashes:
