@@ -8,17 +8,18 @@
 #include "cuckoo_hash.h"
 #include "hash_functions.h"
 
+
 struct table_data_t {
-  int *arr;
-  int xdim;
-  int ydim;
+  uint32_t *arr;
+  uint32_t xdim;
+  uint32_t ydim;
 };
 
 void print_table_data(table_data_t t) {
   printf("====================\n");
-  for (int i = 0; i < t.ydim; i++) {
-    for (int j = 0; j < t.xdim; j++) {
-      printf("%3d ", t.arr[i * t.xdim + j]);
+  for (uint32_t i = 0; i < t.ydim; i++) {
+    for (uint32_t j = 0; j < t.xdim; j++) {
+      printf("%9u ", t.arr[i * t.xdim + j]);
     }
     if (i == 0) {
       printf("\n====================");
@@ -28,16 +29,18 @@ void print_table_data(table_data_t t) {
   printf("\n");
 }
 
-table_data_t parse_table_file(char *filename, int xdim, int ydim) {
+table_data_t parse_table_file(char *filename, uint32_t xdim, uint32_t ydim) {
   std::cout << filename << " xdim: " << xdim << ", ydim: " << ydim << std::endl;
-  int *arr = (int *) malloc(xdim * ydim * sizeof(int));
+  uint32_t *arr = (uint32_t *) malloc(xdim * ydim * sizeof(uint32_t));
   std::fstream fileStream;
   fileStream.open(filename);
-  int holder;
-  for (int i = 0; i < ydim; i++) {
-    for (int j = 0; j < xdim; j++) {
+  uint32_t holder;
+  for (uint32_t i = 0; i < ydim; i++) {
+    for (uint32_t j = 0; j < xdim+1; j++) {
       fileStream >> holder;
-      arr[i * xdim + j] = holder;
+      if (j != 0) {
+        arr[i * xdim + j - 1] = holder;
+      }
     }
   }
   fileStream.close();
@@ -46,6 +49,7 @@ table_data_t parse_table_file(char *filename, int xdim, int ydim) {
   table.arr = arr;
   table.xdim = xdim;
   table.ydim = ydim;
+  print_table_data(table);
 
   return table;
 }
@@ -55,41 +59,41 @@ table_data_t parse_table_file(char *filename, int xdim, int ydim) {
 int main(int argc, char *argv[])
 {
 #ifndef HASHTEST
-  if (argc != 11) {
+  if (argc != 8) {
     std::cout << "ARGS ERROR" << std::endl;
-    std::cout << "./main <t1_filename> <t1_xdim> <t1_ydim> <t2_filename> <t2_xdim> <t2_ydim> <t3_filename> <t3_xdim> <t3_ydim> <join_column_value>" << std::endl;
+    std::cout << "./main <t1_filename> <t1_xdim> <t1_ydim> <t2_filename> <t2_xdim> <t2_ydim> <join_column>" << std::endl;
     return 1;
   }
 
-  std::cout<<"\nJoin on the column named "<<argv[10]<<std::endl<<"First row is the column names\n";
-  int t1_xdim = strtol(argv[2], nullptr, 0);
-  int t1_ydim = strtol(argv[3], nullptr, 0);
+  std::cout << "\nJoin on the column named " << argv[7] << std::endl;
+  uint32_t t1_xdim = strtoul(argv[2], nullptr, 0);
+  uint32_t t1_ydim = strtoul(argv[3], nullptr, 0);
   table_data_t t1_data = parse_table_file(argv[1], t1_xdim, t1_ydim);
   std::cout << "TABLE 1" << std::endl;
   print_table_data(t1_data);
 
-  int t2_xdim = strtol(argv[5], nullptr, 0);
-  int t2_ydim = strtol(argv[6], nullptr, 0);
+  uint32_t t2_xdim = strtoul(argv[5], nullptr, 0);
+  uint32_t t2_ydim = strtoul(argv[6], nullptr, 0);
   table_data_t t2_data = parse_table_file(argv[4], t2_xdim, t2_ydim);
   std::cout << "TABLE 2" << std::endl;
   print_table_data(t2_data);
 
-  int join_column_value = strtol(argv[10], nullptr, 0);
-  int t1_join_column_index;
-  int t2_join_column_index;
-  for (int i = 0; i < t1_data.xdim; i++) {
+  uint32_t join_column_value = strtoul(argv[7], nullptr, 0);
+  uint32_t t1_join_column_index;
+  uint32_t t2_join_column_index;
+  for (uint32_t i = 0; i < t1_data.xdim; i++) {
     if (t1_data.arr[i] == join_column_value) {
       t1_join_column_index = i;
     }
   }
-  for (int i = 0; i < t2_data.xdim; i++) {
+  for (uint32_t i = 0; i < t2_data.xdim; i++) {
     if (t2_data.arr[i] == join_column_value) {
       t2_join_column_index = i;
     }
   }
 
-  for (int i = 1; i < t1_data.ydim; i++) {
-    int key = t1_data.arr[i * t1_data.xdim + t1_join_column_index];
+  for (uint32_t i = 1; i < t1_data.ydim; i++) {
+    uint32_t key = t1_data.arr[i * t1_data.xdim + t1_join_column_index];
     struct buffer new_buf;
     new_buf.key = key;
     new_buf.rid = i;
@@ -97,8 +101,8 @@ int main(int argc, char *argv[])
     new_buf.hash1 = hash_function(1, key);
     build(new_buf, 0);
   }
-  for (int i = 1; i < t2_data.ydim; i++) {
-    int key = t2_data.arr[i * t2_data.xdim + t2_join_column_index];
+  for (uint32_t i = 1; i < t2_data.ydim; i++) {
+    uint32_t key = t2_data.arr[i * t2_data.xdim + t2_join_column_index];
     struct buffer new_buf;
     new_buf.key = key;
     new_buf.rid = i;
