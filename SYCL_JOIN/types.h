@@ -7,6 +7,8 @@
 #define LGBITSINBYTE (3)
 #define SECINUSEC (1000000)
 
+#include "debug.h"
+
 typedef unsigned char UBYTE; // a byte
 typedef bool BOOL;           // stand-in for Boolean
 

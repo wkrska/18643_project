@@ -6,10 +6,14 @@
   #ifndef _SLTS_
     #define _SLTS_ 4
   #endif
+  #ifndef _PPLN_
+    #define _PPLN_ 1
+  #endif
   #define BundleDepth 8
 #else // Use one time/user defined values
   #define _BKTS_ 16
   #define _SLTS_ 4
+  #define _PPLN_ 2
   #define BundleDepth 8
 #endif
 
@@ -77,7 +81,6 @@ void parse_table_file(JoinKey *table, char *filename, int xdim, int ydim) {
 }
 
 int main(int argc, char *argv[]) {
-
   // Stuff you just need for SYCL, leave this here
   #if FPGA_SIMULATOR
     auto selector = sycl::ext::intel::fpga_simulator_selector_v;
@@ -103,19 +106,19 @@ int main(int argc, char *argv[]) {
   ///////////////////////////
   struct HashFunc {
     static HashVal hash0(JoinKey key) {
-      HashVal hash = key % _BKTS_;
+      HashVal hash = key % (_BKTS_ * _PPLN_);
       return hash;
     }
 
     static HashVal hash1(JoinKey key) {
-      HashVal hash = (key / _BKTS_) % _BKTS_;
+      HashVal hash = (key / _BKTS_) % (_BKTS_ * _PPLN_);
       return hash;
     }
 
     static HashVal djb2(JoinKey key) {
       JoinKey hash = 5381;
       hash = ((hash << 5) + hash) + key;
-      hash = hash % _BKTS_;
+      hash = hash % (_BKTS_ * _PPLN_);
       return (HashVal) hash;
     }
 
@@ -124,7 +127,7 @@ int main(int argc, char *argv[]) {
       key = ((key >> 16) ^ key) * 0x45d9f3b;
       key = ((key >> 16) ^ key) * 0x45d9f3b;
       key = (key >> 16) ^ key;
-      key = key % _BKTS_;
+      key = key % (_BKTS_ * _PPLN_);
       return (HashVal) key;
     }
 
@@ -137,7 +140,7 @@ int main(int argc, char *argv[]) {
       skey = ((JoinKey)skey) ^ (((JoinKey)skey) >> 4);
       skey = skey * 2057;
       key = ((JoinKey)skey) ^ (((JoinKey)skey) >> 16);
-      key = key % _BKTS_;
+      key = key % (_BKTS_ * _PPLN_);
       return (HashVal) key;
     }
 
@@ -149,7 +152,7 @@ int main(int argc, char *argv[]) {
       key = (key+0xd3a2646c) ^ (key<<9);
       key = (key+0xfd7046c5) + (key<<3);
       key = (key^0xb55a4f09) ^ (key>>16);
-      key = key % _BKTS_;
+      key = key % (_BKTS_ * _PPLN_);
       return (HashVal) key;
     }
 
@@ -162,7 +165,7 @@ int main(int argc, char *argv[]) {
       key = ((JoinKey)skey) ^ (((JoinKey)skey) >> 4);
       key = key * c2;
       key = key ^ (key >> 15);
-      key = key % _BKTS_;
+      key = key % (_BKTS_ * _PPLN_);
       return (HashVal) key;
     }
   };
@@ -170,9 +173,9 @@ int main(int argc, char *argv[]) {
   //////////////////////
   // Set up test input
   //////////////////////
-  if (argc != 10) {
+  if (argc != 11) {
     std::cout << "ARGS ERROR" << std::endl;
-    std::cout << "./main <t1_xdim> <t1_ydim> <t2_xdim> <t2_ydim> <t1_filename> <t2_filename> <join_column_value> <data_source_select> <hash_method_select>" << std::endl;
+    std::cout << "./main <t1_xdim> <t1_ydim> <t2_xdim> <t2_ydim> <t1_filename> <t2_filename> <join_column_value> <data_source_select> <hash_method_select> <timing_only>" << std::endl;
     return 1;
   }
   int t1_xdim = strtol(argv[1], nullptr, 0);
@@ -183,6 +186,7 @@ int main(int argc, char *argv[]) {
   int data_src_sel = strtol(argv[8], nullptr, 0);
   HashSel hash_sel[1];
   hash_sel[0] = strtol(argv[9], nullptr, 0);
+  int timing_only = strtol(argv[10], nullptr, 0);
 
   JoinKey t1_data_host[t1_xdim*t1_ydim];
   JoinKey t2_data_host[t2_xdim*t2_ydim];
@@ -192,6 +196,12 @@ int main(int argc, char *argv[]) {
 
   int t1_join_column_index = 0;
   int t2_join_column_index = 0;
+
+  printf("Params:\nBKTS: %d\nSLTS: %d\nPPLN: %d\n", _BKTS_, _SLTS_, _PPLN_);
+  printf("t1_xdim: %d\nt1_ydim: %d (max %d)\nt2_xdim: %d\nt2_ydim: %d\n", t1_xdim, t1_ydim, (_PPLN_*_BKTS_*_SLTS_), t2_xdim, t2_ydim);
+  printf("join_column_value: %d\ndata_source_select: %d\nhash_method_select: %d\ntiming_only: %s\n\n", join_column_value, data_src_sel, hash_sel[0], (timing_only)?"true":"false");
+  fflush(stdout);
+
   if (data_src_sel == 0) {
     std::cout<<"\nJoin on the column named "<<argv[7]<<std::endl<<"First row is the column names\n";
     parse_table_file(t1_data_host, argv[5], t1_xdim, t1_ydim);
@@ -248,13 +258,49 @@ int main(int argc, char *argv[]) {
   
   MatchedTuple *MatchedOutput_device = malloc_device<MatchedTuple>(t1_ydim+t2_ydim, q);
   HashedTuple *UnmappedOutput_device = malloc_device<HashedTuple>(t1_ydim, q);
-  HashEntry *HashedOutput_device = malloc_device<HashEntry>(_BKTS_*_SLTS_, q);
-  ClockCounter *ClockCounter_device = malloc_device<ClockCounter>(2, q);
+  HashEntry *HashedOutput_device0 = malloc_device<HashEntry>(_BKTS_*_SLTS_, q);
+  #if (_PPLN_ > 1)
+  HashEntry *HashedOutput_device1 = malloc_device<HashEntry>(_BKTS_*_SLTS_, q);
+  #endif
+  #if (_PPLN_ > 2)
+  HashEntry *HashedOutput_device2 = malloc_device<HashEntry>(_BKTS_*_SLTS_, q);
+  #endif
+  #if (_PPLN_ > 3)
+  HashEntry *HashedOutput_device3 = malloc_device<HashEntry>(_BKTS_*_SLTS_, q);
+  #endif
+  ClockCounter *ClockCounter_device0 = malloc_device<ClockCounter>(2, q);
+  #if (_PPLN_ > 1)
+  ClockCounter *ClockCounter_device1 = malloc_device<ClockCounter>(2, q);
+  #endif
+  #if (_PPLN_ > 2)
+  ClockCounter *ClockCounter_device2 = malloc_device<ClockCounter>(2, q);
+  #endif
+  #if (_PPLN_ > 3)
+  ClockCounter *ClockCounter_device3 = malloc_device<ClockCounter>(2, q);
+  #endif
 
   MatchedTuple MatchedOutput_host[t1_ydim+t2_ydim];
   HashedTuple UnmappedOutput_host[t1_ydim];
-  HashEntry HashedOutput_host[_BKTS_*_SLTS_] = {};
-  ClockCounter ClockCounter_host[2] = {};
+  HashEntry HashedOutput_host0[_BKTS_*_SLTS_] = {};
+  #if (_PPLN_ > 1)
+  HashEntry HashedOutput_host1[_BKTS_*_SLTS_] = {};
+  #endif
+  #if (_PPLN_ > 2)
+  HashEntry HashedOutput_host2[_BKTS_*_SLTS_] = {};
+  #endif
+  #if (_PPLN_ > 3)
+  HashEntry HashedOutput_host3[_BKTS_*_SLTS_] = {};
+  #endif
+  ClockCounter ClockCounter_host0[2] = {};
+  #if (_PPLN_ > 1)
+  ClockCounter ClockCounter_host1[2] = {};
+  #endif
+  #if (_PPLN_ > 2)
+  ClockCounter ClockCounter_host2[2] = {};
+  #endif
+  #if (_PPLN_ > 3)
+  ClockCounter ClockCounter_host3[2] = {};
+  #endif
 
   // Zero out buffers
   for (int i = 0; i < t1_ydim+t2_ydim; i++) MatchedOutput_host[i].valid = 0;
@@ -312,34 +358,61 @@ int main(int argc, char *argv[]) {
     });
 
     // Hash values
-    q.submit([&](handler &h) {
-      h.single_task<class HashTask0>([=]() {
-        hashStage<HashFunc, InputPipe0, HashedTuplePipe0, BundleDepth>();
-      });
-    });
+    q.submit([&](handler &h) { h.single_task<class HashTask0>([=]() {
+        hashStage<HashFunc, InputPipe0, HashedTuplePipe0, BundleDepth>();});});
+
+    // Fork values
+    q.submit([&](handler &h) { h.single_task<class ForkTask0>([=]() {
+        forkStage<HashFunc, HashedTuplePipe0, ForkedTuplePipe0, ForkedTuplePipe1, ForkedTuplePipe2, ForkedTuplePipe3>();});});
 
     // Store hashed values in hash table
-    q.submit([&](handler &h) {
-      h.single_task<class HashTableTask0>([=]() {
-        hashTableStage<HashedTuplePipe0, 
-                       UnmappableTuplePipe0, 
-                       MatchedTuplePipe0, 
-                       HashedTablePipe0,
-                       HashTableTimingPipe0>();
-      });
-    });
+    q.submit([&](handler &h) { h.single_task<class HashTableTask0>([=]() {
+        hashTableStage<ForkedTuplePipe0, UnmappableTuplePipe0, MatchedTuplePipe0, HashedTablePipe0, HashTableTimingPipe0>();});});
 
     // Stupid hacky timing method this truly sucks but we need to count clocks
-    // gettimeofday(&TimerStage, NULL);
-    q.submit([&](handler &h) {
-      h.single_task<class TimerTask0>([=]() {
-        timerStage<HashTableTimingPipe0, TimeReportingPipe0>();
-      });
-    });
+    q.submit([&](handler &h) { h.single_task<class TimerTask0>([=]() {
+        timerStage<HashTableTimingPipe0, TimeReportingPipe0>();});});
 
+    #if (_PPLN_ > 1)
+    // Store hashed values in hash table
+    q.submit([&](handler &h) { h.single_task<class HashTableTask1>([=]() {
+        hashTableStage<ForkedTuplePipe1, UnmappableTuplePipe1, MatchedTuplePipe1, HashedTablePipe1, HashTableTimingPipe1>();});});
+
+    // Stupid hacky timing method this truly sucks but we need to count clocks
+    q.submit([&](handler &h) { h.single_task<class TimerTask1>([=]() {
+        timerStage<HashTableTimingPipe1, TimeReportingPipe1>();});});
+    #endif
+
+    #if (_PPLN_ > 2)
+    // Store hashed values in hash table
+    q.submit([&](handler &h) { h.single_task<class HashTableTask2>([=]() {
+        hashTableStage<ForkedTuplePipe2, UnmappableTuplePipe2, MatchedTuplePipe2, HashedTablePipe2, HashTableTimingPipe2>();});});
+
+    // Stupid hacky timing method this truly sucks but we need to count clocks
+    q.submit([&](handler &h) { h.single_task<class TimerTask2>([=]() {
+        timerStage<HashTableTimingPipe2, TimeReportingPipe2>();});});
+    #endif
+
+    #if (_PPLN_ > 3)
+    // Store hashed values in hash table
+    q.submit([&](handler &h) { h.single_task<class HashTableTask3>([=]() {
+        hashTableStage<ForkedTuplePipe3, UnmappableTuplePipe3, MatchedTuplePipe3, HashedTablePipe3, HashTableTimingPipe3>();});});
+
+    // Stupid hacky timing method this truly sucks but we need to count clocks
+    q.submit([&](handler &h) { h.single_task<class TimerTask3>([=]() {
+        timerStage<HashTableTimingPipe3, TimeReportingPipe3>();});});
+    #endif
+
+    #if 0
+    // Funnel values
+    q.submit([&](handler &h) { h.single_task<class FunnelTask0>([=]() {
+        funnelStage<MatchedTuplePipe0, MatchedTuplePipe1, MatchedTuplePipe2, MatchedTuplePipe3, FunnelledMatchedTuplePipe0, MatchedTuple>();});});
+    
+    // Funnel values
+    q.submit([&](handler &h) { h.single_task<class FunnelTask1>([=]() {
+        funnelStage<UnmappableTuplePipe0, UnmappableTuplePipe1, UnmappableTuplePipe2, UnmappableTuplePipe3, FunnelledUnmappableTuplePipe0, HashedTuple>();});});
     // write to dram to communicate back to host
-    auto ev0 = q.submit([&](handler &h) {
-      h.single_task<class SuccessfulReadoutTask>([=]() {
+    auto ev0 = q.submit([&](handler &h) { h.single_task<class SuccessfulReadoutTask>([=]() {
         // Zero out
         for (int i = 0; i < t1_ydim+t2_ydim; i++) {
           MatchedOutput_device[i].valid = 0;
@@ -347,172 +420,417 @@ int main(int argc, char *argv[]) {
           MatchedOutput_device[i].val0 = 0;
           MatchedOutput_device[i].val1 = 0;
         }
-        bool eof = false;
+        int eof = 0;
         int i = 0;
-        while (!eof) {
-          MatchedTuple temp = MatchedTuplePipe0::read();
-          if (temp.valid) {
-            MatchedOutput_device[i] = temp;
-            i++;
+        while (eof < _PPLN_) {
+          bool rValid;
+          MatchedTuple temp = FunnelledMatchedTuplePipe0::read(rValid);
+          if (rValid) {
+            if (temp.valid) {
+              MatchedOutput_device[i] = temp;
+              i++;
+            }
+            eof += (temp.eof) ? 1 : 0;
           }
-          eof = temp.eof;
         }
       });
     });
-
     // write to dram to communicate back to host
-    auto ev1 = q.submit([&](handler &h) {
-      h.single_task<class UnmappableReadoutTask>([=]() {
+    auto ev1 = q.submit([&](handler &h) { h.single_task<class UnmappableReadoutTask>([=]() {
         // Zero out
         for (int i = 0; i < t1_ydim; i++) {
           UnmappedOutput_device[i].valid = 0;
           UnmappedOutput_device[i].key = 0;
           UnmappedOutput_device[i].val = 0;
         }
-        bool eof = false;
+        int eof = 0;
         int i = 0;
-        while (!eof) {
-          HashedTuple temp = UnmappableTuplePipe0::read();
+        while (eof < _PPLN_) {
+          HashedTuple temp = FunnelledUnmappableTuplePipe0::read();
           if (temp.valid) {
             UnmappedOutput_device[i] = temp;
             i++;
           }
-          eof = temp.eof;
+          eof += (temp.eof) ? 1 : 0;
+        }
+      });
+    });
+    #else
+    auto ev0 = q.submit([&](handler &h) { h.single_task<class SuccessfulReadoutTask>([=]() {
+        // Zero out
+        for (int i = 0; i < t1_ydim+t2_ydim; i++) {
+          MatchedOutput_device[i].valid = 0;
+          MatchedOutput_device[i].key = 0;
+          MatchedOutput_device[i].val0 = 0;
+          MatchedOutput_device[i].val1 = 0;
+        }
+        int eof = 0;
+        int i = 0;
+        while (eof < _PPLN_) {
+          bool rValid;
+          MatchedTuple temp = MatchedTuplePipe0::read(rValid);
+          if (rValid) {
+            if (temp.valid) {
+              MatchedOutput_device[i] = temp;
+              i++;
+            }
+            eof += (temp.eof) ? 1 : 0;
+          }
+          #if (_PPLN_ > 1)
+          temp = MatchedTuplePipe1::read(rValid);
+          if (rValid) {
+            if (temp.valid) {
+              MatchedOutput_device[i] = temp;
+              i++;
+            }
+            eof += (temp.eof) ? 1 : 0;
+          }
+          #endif
+          #if (_PPLN_ > 2)
+          temp = MatchedTuplePipe2::read(rValid);
+          if (rValid) {
+            if (temp.valid) {
+              MatchedOutput_device[i] = temp;
+              i++;
+            }
+            eof += (temp.eof) ? 1 : 0;
+          }
+          #endif
+          #if (_PPLN_ > 3)
+          temp = MatchedTuplePipe3::read(rValid);
+          if (rValid) {
+            if (temp.valid) {
+              MatchedOutput_device[i] = temp;
+              i++;
+            }
+            eof += (temp.eof) ? 1 : 0;
+          }
+          #endif
         }
       });
     });
 
+    auto  ev1 = q.submit([&](handler &h) { h.single_task<class UnmappableReadoutTask>([=]() {
+        // Zero out
+        for (int i = 0; i < t1_ydim; i++) {
+          UnmappedOutput_device[i].valid = 0;
+          UnmappedOutput_device[i].key = 0;
+          UnmappedOutput_device[i].val = 0;
+        }
+        int eof = 0;
+        int i = 0;
+        while (eof < _PPLN_) {
+          bool rValid;
+          HashedTuple temp = UnmappableTuplePipe0::read(rValid);
+          if (rValid) {
+            if (temp.valid) {
+              UnmappedOutput_device[i] = temp;
+              i++;
+            }
+            eof += (temp.eof) ? 1 : 0;
+          }
+          #if (_PPLN_ > 1)
+          temp = UnmappableTuplePipe1::read(rValid);
+          if (rValid) {
+            if (temp.valid) {
+              UnmappedOutput_device[i] = temp;
+              i++;
+            }
+            eof += (temp.eof) ? 1 : 0;
+          }
+          #endif
+          #if (_PPLN_ > 2)
+          temp = UnmappableTuplePipe2::read(rValid);
+          if (rValid) {
+            if (temp.valid) {
+              UnmappedOutput_device[i] = temp;
+              i++;
+            }
+            eof += (temp.eof) ? 1 : 0;
+          }
+          #endif
+          #if (_PPLN_ > 3)
+          temp = UnmappableTuplePipe3::read(rValid);
+          if (rValid) {
+            if (temp.valid) {
+              UnmappedOutput_device[i] = temp;
+              i++;
+            }
+            eof += (temp.eof) ? 1 : 0;
+          }
+          #endif
+        }
+      });
+    });
+    #endif
+
     // write to dram to communicate back to host
-    auto ev2 = q.submit([&](handler &h) {
-      h.single_task<class HashTableReadoutTask>([=]() {
+    auto ev2_0 = q.submit([&](handler &h) { h.single_task<class HashTableReadoutTask0>([=]() {
         for (int b = 0; b < _BKTS_; b++) {
           for (int s = 0; s < _SLTS_; s++ ) {
-            HashedOutput_device[b*_SLTS_+s]=HashedTablePipe0::read();
-          }
-        }
-      });
-    });
+            HashedOutput_device0[b*_SLTS_+s]=HashedTablePipe0::read();
+    }}});});
+    #if (_PPLN_ > 1)
+    // write to dram to communicate back to host
+    auto ev2_1 = q.submit([&](handler &h) { h.single_task<class HashTableReadoutTask1>([=]() {
+        for (int b = 0; b < _BKTS_; b++) {
+          for (int s = 0; s < _SLTS_; s++ ) {
+            HashedOutput_device1[b*_SLTS_+s]=HashedTablePipe1::read();
+    }}});});
+    #endif
+    #if (_PPLN_ > 2)
+    // write to dram to communicate back to host
+    auto ev2_2 = q.submit([&](handler &h) { h.single_task<class HashTableReadoutTask2>([=]() {
+        for (int b = 0; b < _BKTS_; b++) {
+          for (int s = 0; s < _SLTS_; s++ ) {
+            HashedOutput_device2[b*_SLTS_+s]=HashedTablePipe2::read();
+    }}});});
+    #endif
+    #if (_PPLN_ > 3)
+    // write to dram to communicate back to host
+    auto ev2_3 = q.submit([&](handler &h) { h.single_task<class HashTableReadoutTask3>([=]() {
+        for (int b = 0; b < _BKTS_; b++) {
+          for (int s = 0; s < _SLTS_; s++ ) {
+            HashedOutput_device3[b*_SLTS_+s]=HashedTablePipe3::read();
+    }}});});
+    #endif
 
     // write to dram to communicate back to host
-    auto ev3 = q.submit([&](handler &h) {
-      h.single_task<class TimingReadoutTask>([=]() {
+    auto ev3_0 = q.submit([&](handler &h) { h.single_task<class TimingReadoutTask0>([=]() {
         for (int i = 0; i < 2; i++) {
-          ClockCounter_device[i]=TimeReportingPipe0::read();
-        }
-      });
-    });
+          ClockCounter_device0[i]=TimeReportingPipe0::read();
+    }});});
+    #if (_PPLN_ > 1)
+    // write to dram to communicate back to host
+    auto ev3_1 = q.submit([&](handler &h) { h.single_task<class TimingReadoutTask1>([=]() {
+        for (int i = 0; i < 2; i++) {
+          ClockCounter_device1[i]=TimeReportingPipe1::read();
+    }});});
+    #endif
+    #if (_PPLN_ > 2)
+    // write to dram to communicate back to host
+    auto ev3_2 = q.submit([&](handler &h) { h.single_task<class TimingReadoutTask2>([=]() {
+        for (int i = 0; i < 2; i++) {
+          ClockCounter_device2[i]=TimeReportingPipe2::read();
+    }});});
+    #endif
+    #if (_PPLN_ > 3)
+    // write to dram to communicate back to host
+    auto ev3_3 = q.submit([&](handler &h) { h.single_task<class TimingReadoutTask3>([=]() {
+        for (int i = 0; i < 2; i++) {
+          ClockCounter_device3[i]=TimeReportingPipe3::read();
+    }});});
+    #endif
 
-    ev0.wait();
-    ev1.wait();
-    ev2.wait();
-    ev3.wait();
+
+    if (timing_only == 0) {
+      ev0.wait(); // read mappable
+      ev1.wait(); // read unmappable
+      ev2_0.wait(); // read hash table
+      #if (_PPLN_ > 1)
+      ev2_1.wait(); // read hash table
+      #endif
+      #if (_PPLN_ > 2)
+      ev2_2.wait(); // read hash table
+      #endif
+      #if (_PPLN_ > 3)
+      ev2_3.wait(); // read hash table
+      #endif
+    }
+    ev3_0.wait(); // read timing
+    #if (_PPLN_ > 1)
+    ev3_1.wait(); // read timing
+    #endif
+    #if (_PPLN_ > 2)
+    ev3_2.wait(); // read timing
+    #endif
+    #if (_PPLN_ > 3)
+    ev3_3.wait(); // read timing
+    #endif
 
   } catch (std::exception const &e) {
     std::cerr << "Exception!\n";
     std::terminate();
   }
-  // gettimeofday(&EndDeviceDram, NULL);
 
   // Copy values back to host
-  auto ev0 = q.memcpy(MatchedOutput_host, 
-                      MatchedOutput_device,
-                      (t1_ydim+t2_ydim) * sizeof(MatchedTuple));
-  auto ev1 = q.memcpy(UnmappedOutput_host, 
-                      UnmappedOutput_device,
-                      (t1_ydim) * sizeof(HashedTuple));
-  auto ev2 = q.memcpy(HashedOutput_host, 
-                      HashedOutput_device,
-                      (_BKTS_*_SLTS_) * sizeof(HashEntry));
-  auto ev3 = q.memcpy(ClockCounter_host, 
-                      ClockCounter_device,
-                      2 * sizeof(ClockCounter));
-
-  ev0.wait();
-  ev1.wait();
-  ev2.wait();
-  ev3.wait();
+  if (timing_only == 0) {
+    auto ev0 = q.memcpy(MatchedOutput_host, MatchedOutput_device, (t1_ydim+t2_ydim) * sizeof(MatchedTuple));
+    ev0.wait();
+    auto ev1 = q.memcpy(UnmappedOutput_host, UnmappedOutput_device, (t1_ydim) * sizeof(HashedTuple));
+    ev1.wait();
+    auto ev2_0 = q.memcpy(HashedOutput_host0, HashedOutput_device0, (_BKTS_*_SLTS_) * sizeof(HashEntry));
+    ev2_0.wait();
+    #if (_PPLN_ > 1)
+    auto ev2_1 = q.memcpy(HashedOutput_host1, HashedOutput_device1, (_BKTS_*_SLTS_) * sizeof(HashEntry));
+    ev2_1.wait();
+    #endif
+    #if (_PPLN_ > 2)
+    auto ev2_2 = q.memcpy(HashedOutput_host2, HashedOutput_device2, (_BKTS_*_SLTS_) * sizeof(HashEntry));
+    ev2_2.wait();
+    #endif
+    #if (_PPLN_ > 3)
+    auto ev2_3 = q.memcpy(HashedOutput_host3, HashedOutput_device3, (_BKTS_*_SLTS_) * sizeof(HashEntry));
+    ev2_3.wait();
+    #endif
+  }
+  auto ev3_0 = q.memcpy(ClockCounter_host0, ClockCounter_device0, 2 * sizeof(ClockCounter));
+  ev3_0.wait();
+  #if (_PPLN_ > 1)
+  auto ev3_1 = q.memcpy(ClockCounter_host1, ClockCounter_device1, 2 * sizeof(ClockCounter));
+  ev3_1.wait();
+  #endif
+  #if (_PPLN_ > 2)
+  auto ev3_2 = q.memcpy(ClockCounter_host2, ClockCounter_device2, 2 * sizeof(ClockCounter));
+  ev3_2.wait();
+  #endif
+  #if (_PPLN_ > 3)
+  auto ev3_3 = q.memcpy(ClockCounter_host3, ClockCounter_device3, 2 * sizeof(ClockCounter));
+  ev3_3.wait();
+  #endif
 
   // for some unknown reason, execution has been seg-faulting here. Added try-catches to make sure we get our performance nums, also reordered to make sure we get the important information first
   // Print out timing info.
-  printf("\n\nPhase       | Interval (clocks)\n");
-  printf("Build Phase | %lld\n", ClockCounter_host[0]); 
-  printf("Probe Phase | %lld\n", ClockCounter_host[1]);
+  printf("\n\nPipeline 0\nPhase       | Interval (clocks)\n");
+  printf("Build Phase | %lld\n", ClockCounter_host0[0]); 
+  printf("Probe Phase | %lld\n", ClockCounter_host0[1]);
+  fflush(stdout);
 
-  // Print out all matched values
-  printf("\n\nMatched Outputs\n");
-  printf("    | Key  |  V1  |  V2\n");
-  for(int i = 0; i < t1_ydim+t2_ydim; i++) {
-    if (MatchedOutput_host[i].valid) {
-      printf("%3u | %4u | %4u | %4u\n", i, MatchedOutput_host[i].key, MatchedOutput_host[i].val0, MatchedOutput_host[i].val1);
-    }
-  }
+  #if (_PPLN_ > 1)
+  printf("\n\nPipeline 1\nPhase       | Interval (clocks)\n");
+  printf("Build Phase | %lld\n", ClockCounter_host1[0]); 
+  printf("Probe Phase | %lld\n", ClockCounter_host1[1]);
+  fflush(stdout);
 
-  // Print out all hashed values
-  printf("\n\nHash Table\n");
-  printf("    | ");
-  for (int s = 0; s < _SLTS_; s++)
-    printf("SL %1u | ", s);
-  printf("\n");
-  // Stream ot hash table for debugging reasons
-  for (int b = 0; b < _BKTS_; b++) {
-    printf("%3u | ",b);
-    for (int s = 0; s < _SLTS_; s++)
-      printf("%4u | ", HashedOutput_device[b*_SLTS_+s].key);
-    printf("\n");
-  }
+  #endif
+  #if (_PPLN_ > 2)
+  printf("\n\nPipeline 2\nPhase       | Interval (clocks)\n");
+  printf("Build Phase | %lld\n", ClockCounter_host2[0]); 
+  printf("Probe Phase | %lld\n", ClockCounter_host2[1]);
+  fflush(stdout);
 
-  // Print out input tables
-  printf("\n\nTable 1\n");
-  printf("Val | ");
-  for (int c = 0; c < t1_xdim; c++)
-    printf("Col%1u | ", c);
-  printf("\n");
-  for (int r = 0; r < t1_ydim; r++) {
-    printf("%3u | ",r);
-    for (int c = 0; c < t1_xdim; c++)
-      printf("%4u | ", t1_data_host[r*t1_xdim+c]);
-    printf("\n");
-  }
+  #endif
+  #if (_PPLN_ > 3)
+  printf("\n\nPipeline 3\nPhase       | Interval (clocks)\n");
+  printf("Build Phase | %lld\n", ClockCounter_host3[0]); 
+  printf("Probe Phase | %lld\n", ClockCounter_host3[1]);
+  fflush(stdout);
 
-  printf("\n\nTable 2\n");
-  printf("Val | ");
-  for (int c = 0; c < t2_xdim; c++)
-    printf("Col%1u | ", c);
-  printf("\n");
-  for (int r = 0; r < t2_ydim; r++) {
-    printf("%3u | ",r);
-    for (int c = 0; c < t2_xdim; c++)
-      printf("%4u | ", t2_data_host[r*t2_xdim+c]);
-    printf("\n");
-  }
+  #endif
 
-  // print key histogram
-  printf("\n\n\nTable 2 Histogram (bounded to what aligns with table 1\n");
-  // int buckets[(_BKTS_/4)] = {};
-  // for (int r = 0; r < t2_ydim; r++)
-  //   buckets[t2_data_host[r*t2_xdim+t2_join_column_index]/(t1_ydim/(_BKTS_/4))]++;
-  // for (int i = 0; i < (_BKTS_/4); i++) {
-  //   printf("[%4d,%4d): %3d | ", (i*t1_ydim)/(_BKTS_/4), ((i+1)*t1_ydim)/(_BKTS_/4)-1, buckets[i]);
-  //   for (int p = 0; p < buckets[i]; p++)
-  //     printf("*");
-  //   printf("\n");
-  // }
-  for (int a = 0; a < t1_ydim; a++) {
-    printf("%3d |",c1_data_host[a]);
-    for (int b = 0; b < t2_ydim; b++) {
-      if (c2_data_host[b]==c1_data_host[a]) {
-        printf("*");
+  if (timing_only == 0) {
+    // Print out all matched values
+    printf("\n\nMatched Outputs\n");
+    printf("    | Key  |  V1  |  V2\n");
+    for(int i = 0; i < t1_ydim+t2_ydim; i++) {
+      if (MatchedOutput_host[i].valid) {
+        printf("%3u | %4u | %4u | %4u\n", i, MatchedOutput_host[i].key, MatchedOutput_host[i].val0, MatchedOutput_host[i].val1);
       }
     }
-    printf("\n");
-  }
   
-  // Print out all unmatched values
-  printf("\n\nUnmappable Values\n");
-  printf("    | Key  | Val\n");
-  for(int i = 0; i < t1_ydim; i++) {
-    if (UnmappedOutput_host[i].valid) {
-      printf("%3u | %4u | %4u\n", i, UnmappedOutput_host[i].key, UnmappedOutput_host[i].val);
+    // Print out all hashed values
+    printf("\n\nHash Table0\n");
+    printf("    | ");
+    for (int s = 0; s < _SLTS_; s++)
+      printf("SL %1u | ", s);
+    printf("\n");
+    // Stream out hash table for debugging reasons
+    for (int b = 0; b < _BKTS_; b++) {
+      printf("%3u | ",b);
+      for (int s = 0; s < _SLTS_; s++)
+        printf("%4u | ", HashedOutput_device0[b*_SLTS_+s].key);
+      printf("\n");
+    }
+    #if (_PPLN_ > 1)
+      // Print out all hashed values
+      printf("\n\nHash Table1\n");
+      printf("    | ");
+      for (int s = 0; s < _SLTS_; s++)
+        printf("SL %1u | ", s);
+      printf("\n");
+      // Stream out hash table for debugging reasons
+      for (int b = 0; b < _BKTS_; b++) {
+        printf("%3u | ",b);
+        for (int s = 0; s < _SLTS_; s++)
+          printf("%4u | ", HashedOutput_device1[b*_SLTS_+s].key);
+        printf("\n");
+      }
+    #endif
+    #if (_PPLN_ > 2)
+      // Print out all hashed values
+      printf("\n\nHash Table2\n");
+      printf("    | ");
+      for (int s = 0; s < _SLTS_; s++)
+        printf("SL %1u | ", s);
+      printf("\n");
+      // Stream out hash table for debugging reasons
+      for (int b = 0; b < _BKTS_; b++) {
+        printf("%3u | ",b);
+        for (int s = 0; s < _SLTS_; s++)
+          printf("%4u | ", HashedOutput_device2[b*_SLTS_+s].key);
+        printf("\n");
+      }
+    #endif
+    #if (_PPLN_ > 3)
+      // Print out all hashed values
+      printf("\n\nHash Table3\n");
+      printf("    | ");
+      for (int s = 0; s < _SLTS_; s++)
+        printf("SL %1u | ", s);
+      printf("\n");
+      // Stream out hash table for debugging reasons
+      for (int b = 0; b < _BKTS_; b++) {
+        printf("%3u | ",b);
+        for (int s = 0; s < _SLTS_; s++)
+          printf("%4u | ", HashedOutput_device3[b*_SLTS_+s].key);
+        printf("\n");
+      }
+    #endif
+
+    // Print out input tables
+    printf("\n\nTable 1\n");
+    printf("Val | ");
+    for (int c = 0; c < t1_xdim; c++)
+      printf("Col%1u | ", c);
+    printf("\n");
+    for (int r = 0; r < t1_ydim; r++) {
+      printf("%3u | ",r);
+      for (int c = 0; c < t1_xdim; c++)
+        printf("%4u | ", t1_data_host[r*t1_xdim+c]);
+      printf("\n");
+    }
+
+    printf("\n\nTable 2\n");
+    printf("Val | ");
+    for (int c = 0; c < t2_xdim; c++)
+      printf("Col%1u | ", c);
+    printf("\n");
+    for (int r = 0; r < t2_ydim; r++) {
+      printf("%3u | ",r);
+      for (int c = 0; c < t2_xdim; c++)
+        printf("%4u | ", t2_data_host[r*t2_xdim+c]);
+      printf("\n");
+    }
+
+    // print key histogram
+    printf("\n\n\nTable 2 Histogram (bounded to what aligns with table 1\n");
+    for (int a = 0; a < t1_ydim; a++) {
+      printf("%3d |",c1_data_host[a]);
+      for (int b = 0; b < t2_ydim; b++) {
+        if (c2_data_host[b]==c1_data_host[a]) {
+          printf("*");
+        }
+      }
+      printf("\n");
+    }
+    
+    // Print out all unmatched values
+    printf("\n\nUnmappable Values\n");
+    printf("    | Key  | Val\n");
+    for(int i = 0; i < t1_ydim; i++) {
+      if (UnmappedOutput_host[i].valid) {
+        printf("%3u | %4u | %4u\n", i, UnmappedOutput_host[i].key, UnmappedOutput_host[i].val);
+      }
     }
   }
   

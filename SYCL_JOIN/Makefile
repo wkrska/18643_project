@@ -1,12 +1,13 @@
 # Name Parameters
-VERSION = v5
+VERSION = v6
 JOINF = build/join_$(VERSION)_fpga_$(SEED)_$(MHZ)_$(BKTS)$(SLTS)
 JOINH = build/join_$(VERSION)_hw_$(SEED)_$(MHZ)_$(BKTS)$(SLTS)
 
 # Compilation Parameters
-BKTS = -D_BKTS_=64
+BKTS = -D_BKTS_=16
 SLTS = -D_SLTS_=4
-CONFIG = $(BKTS) $(SLTS) -w
+PPLN = -D_PPLN_=3
+CONFIG = $(BKTS) $(SLTS) $(PPLN) -w
 
 # Runtime Parameters
 ## Real Data
@@ -16,20 +17,21 @@ DSRC1 = /home/18643_team/18643_project/SYCL_JOIN/out_less_32.txt
 CJOIN = 2
 ## Dummy Data
 TB1X = 1
-TB1Y = 128
+TB1Y = 256
 TB2X = 1
-TB2Y = 1024
-DDSEL = 1
+TB2Y = 2048
+DDSEL = 5
 ## Both
-HASH = 0
+HASH = 1
+TMNG = 0
 
-ARGS = $(TB1X) $(TB1Y) $(TB2X) $(TB2Y) $(DSRC0) $(DSRC0) $(CJOIN) $(DDSEL) $(HASH)
-# ARGS = $(TBDIM) $(DSRC0) $(DSRC0) $(CJOIN) $(DDSEL) $(HASH)
+ARGS = $(TB1X) $(TB1Y) $(TB2X) $(TB2Y) $(DSRC0) $(DSRC0) $(CJOIN) $(DDSEL) $(HASH) $(TMNG)
+# ARGS = $(TBDIM) $(DSRC0) $(DSRC0) $(CJOIN) $(DDSEL) $(HASH) $(TMNG)
 
 TARGET = $(OFS_BSP_BASE):ofs_n6001
 MHZ = 650MHz
 
-SEED = 2
+SEED = 0
 
 EARLY = -fsycl-link=early
 SIMULATE = $(CONFIG) -DFPGA_EMULATOR=1 -fsycl -fintelfpga -qactypes -Wall -Wextra -g -O0
