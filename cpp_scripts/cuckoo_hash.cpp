@@ -138,10 +138,6 @@ void build(struct buffer buf, int cnt) {
         new_table1.tag = hash1;
         new_table1.head[0] = hash_table[hash1][i].head[0];
         hash_table[hash_table[hash1][i].tag][free_slot] = new_table1;
-        // hash_table[hash_table[hash1][i].tag][free_slot].status = 1;
-        // hash_table[hash_table[hash1][i].tag][free_slot].tag = hash1;
-        // hash_table[hash1][i].tag = hash0;
-        // hash_table[hash1][i].head[0] = buf;
 	struct table new_table2;
         new_table2.status = 1;
         new_table2.tag = hash0;
@@ -167,7 +163,7 @@ void print_addr_table() {
     key = addr_table[i].key;
     rid1 = addr_table[i].rid1;;
     rid2 = addr_table[i].rid2;;
-    if (key != INT_MIN)  {
+    if (key != INT_MIN) {
       std::cout<<"Key: "<<key<<" rid1: "<<rid1<<" rid2: "<<rid2<<"\n";
     }
   }
@@ -176,23 +172,37 @@ void print_addr_table() {
 
 void print_hash_table() {
   std::cout<<"\nHASH TABLE\n";
-  printf("====================\n");
+  //printf("====================\n");
+  //for (int i = 0; i < R; i++) {
+  //  for (int j = 0; j < C; j++) {
+  //    if (hash_table[i][j].status == 1) {
+  //      std::cout<<hash_table[i][j].head[0].key;
+  //      if (hash_table[i][j].head[0].key < 100 and hash_table[i][j].head[0].key > 9) {
+  //        std::cout<<" |";
+  //      } else if (hash_table[i][j].head[0].key < 10) {
+  //        std::cout<<"  |";
+  //      } else {
+  //        std::cout<<"|";
+  //      }
+  //    } else {
+  //      std::cout<<"   |";
+  //    }
+  //  }
+  //  std::cout<<std::endl;
+  //}
+  return;
+}
+
+void evaluate_hash_table() {
+  //std::cout << "\nHASH EVAL START\n" << std::endl;
   for (int i = 0; i < R; i++) {
+    int occupancy = 0;
     for (int j = 0; j < C; j++) {
       if (hash_table[i][j].status == 1) {
-        std::cout<<hash_table[i][j].head[0].key;
-        if (hash_table[i][j].head[0].key < 100 and hash_table[i][j].head[0].key > 9) {
-          std::cout<<" |";
-        } else if (hash_table[i][j].head[0].key < 10) {
-          std::cout<<"  |";
-        } else {
-          std::cout<<"|";
-        }
-      } else {
-        std::cout<<"   |";
+        occupancy++;
       }
     }
-    std::cout<<std::endl;
+    std::cout << "row[" << i << "] occupancy: " << occupancy << std::endl;  
   }
   return;
 }
@@ -205,38 +215,3 @@ int find_free_collision_list_spot (struct buffer buf[]) {
   }
   return INT_MIN;
 }
-
-/*
-    Test: join these 2 tables
-    
-    table 1
-    key | rid1
-    1    0
-    3    1
-    5    2
-    7    3
-    
-    table 2
-    key | rid2
-    2    0
-    4    1
-    5    2
-    3    3
-    
-*/
-
-
-/*
-int main() {
-    build(buffer(1, 0, hash_function(0, 1), hash_function(1, 1)), 0);
-    build(buffer(3, 1, hash_function(0, 3), hash_function(1, 3)), 0);
-    build(buffer(5, 2, hash_function(0, 5), hash_function(1, 5)), 0);
-    build(buffer(7, 3, hash_function(0, 7), hash_function(1, 7)), 0);
-    probe(buffer(2, 0, hash_function(0, 2), hash_function(1, 2)));
-    probe(buffer(4, 1, hash_function(0, 4), hash_function(1, 4)));
-    probe(buffer(5, 2, hash_function(0, 5), hash_function(1, 5)));
-    probe(buffer(3, 3, hash_function(0, 3), hash_function(1, 3)));
-    print_addr_table();
-    return 0;
-}
-*/

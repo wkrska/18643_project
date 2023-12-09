@@ -1,0 +1,16 @@
+row[0] occupancy: 0
+row[1] occupancy: 3
+row[2] occupancy: 3
+row[3] occupancy: 5
+row[4] occupancy: 4
+row[5] occupancy: 4
+row[6] occupancy: 3
+row[7] occupancy: 3
+row[8] occupancy: 2
+row[9] occupancy: 1
+row[10] occupancy: 3
+row[11] occupancy: 6
+row[12] occupancy: 5
+row[13] occupancy: 3
+row[14] occupancy: 4
+row[15] occupancy: 1
