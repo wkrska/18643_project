@@ -7,14 +7,13 @@
 // divide (divsd)         13-14
 // sqrt (sqrtpd)          15-16
 //
-// modulo         : 1 x bitwise (modulo power of 2)                    = 1
-// div            : 2 x bitwise (modulo power of 2 and div power of 2) = 2
-// djb2           : 1 x bitwise + 2 * add/sub                          = 9
-// magic_int_hash : 6 x bitwise + 2 * multiply                         = 14
-// hash32shift    : 
-
-// Increasing order of computational complexity (# of operations):
-// modulo -> div -> 
+// modulo          : 1 x bitwise (modulo power of 2)                    = 1
+// div             : 2 x bitwise (modulo power of 2 and div power of 2) = 2
+// djb2            : 1 x bitwise + 2 * add/sub                          = 9
+// magicinthash    : 6 x bitwise + 2 * multiply                         = 14
+// hash32shiftmult : 8 x bitwise + 1 * add/sub + 1 * multiply           = 16
+// hash32shift     : 9 x bitwise + 2 * add/sub + 1 * multiply           = 21
+// jenkins32hash   : 10 x bitwise + 7 * add/sub                         = 38
 
 // This one is also meant to work on strings
 uint32_t djb2(uint32_t val) {
