@@ -1,4 +1,5 @@
 #include "cuckoo_hash.h"
+#include "hash_functions.h"
 
 /*
 	Fig. 2 Dataflow:
@@ -15,8 +16,17 @@ struct table hash_table[R][C];
 
 int hash_function(int function, int key) {
   switch (function) {
+    // modulo_modulo
+    //case 0: return key % R;
+    //case 1: return key % R;
+
+    // modulo_div
+    //case 0: return key % R;
+    //case 1: return (key / R) % R;
+
+    // modulo_djb2
     case 0: return key % R;
-    case 1: return (key / R) % R;
+    case 1: return (int) djb2((uint32_t) key);
   }
   return INT_MIN; // illegal
 }

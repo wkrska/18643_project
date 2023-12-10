@@ -15,14 +15,17 @@ def main(arguments):
 
     all_filenames = args.infiles.split('SPLIT')
     stdevs = []
+    max_occupancy = 0
     for filename in all_filenames:
-        inf = open(filename, 'r')
+        inf = open('/home/18643_team/edwin_stuff/18643_project/cpp_scripts/' + filename, 'r')
         inf_lines = inf.readlines()
 
         occupancies = []
         for line in inf_lines:
             split_line = line.split()
             occupancy = int(split_line[-1])
+            if occupancy > max_occupancy:
+                max_occupancy = occupancy
             occupancies.append(occupancy)
         hash_occupancy_stdev = statistics.stdev(occupancies)
         stdevs.append(hash_occupancy_stdev)
@@ -33,6 +36,7 @@ def main(arguments):
         curr_sum += stdev
     avg = curr_sum / len(stdevs)
     print('avg: ' + str(avg))
+    print('max_occupancy: ' + str(max_occupancy))
 
 
 if __name__ == '__main__':
