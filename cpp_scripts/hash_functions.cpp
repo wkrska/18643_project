@@ -42,6 +42,11 @@ uint32_t magic_int_hash(uint32_t val) {
   val = ((val >> 16) ^ val) * 0x45d9f3b;
   val = ((val >> 16) ^ val) * 0x45d9f3b;
   val = (val >> 16) ^ val;
+  int negcheck = (int) val;
+  if (negcheck < 0) {
+    negcheck = negcheck * -1;
+    return (uint32_t) negcheck;
+  }
   return val;
 }
 
@@ -53,6 +58,11 @@ uint32_t hash32shift(uint32_t val) {
   sval = ((uint32_t)sval) ^ (((uint32_t)sval) >> 4);
   sval = sval * 2057;
   val = ((uint32_t)sval) ^ (((uint32_t)sval) >> 16);
+  int negcheck = (int) val;
+  if (negcheck < 0) {
+    negcheck = negcheck * -1;
+    return (uint32_t) negcheck;
+  }
   return val; 
 }
 
@@ -63,6 +73,11 @@ uint32_t jenkins32hash(uint32_t val) {
   val = (val+0xd3a2646c) ^ (val<<9);
   val = (val+0xfd7046c5) + (val<<3);
   val = (val^0xb55a4f09) ^ (val>>16);
+  int negcheck = (int) val;
+  if (negcheck < 0) {
+    negcheck = negcheck * -1;
+    return (uint32_t) negcheck;
+  }
   return val;
 }
 
@@ -74,5 +89,10 @@ uint32_t hash32shiftmult(uint32_t val) {
   val = (uint32_t(sval)) ^ ((uint32_t(sval)) >> 4);
   val = val * c2;
   val = val ^ (val >> 15);
+  int negcheck = (int) val;
+  if (negcheck < 0) {
+    negcheck = negcheck * -1;
+    return (uint32_t) negcheck;
+  }
   return val;
 }

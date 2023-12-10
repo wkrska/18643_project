@@ -81,6 +81,8 @@ int main(int argc, char *argv[])
   //std::cout << "TABLE 2" << std::endl;
   //print_table_data(t2_data);
 
+  //std::cout << "SEGCHECK 1" << std::endl;
+
   int join_column_value = strtoul(argv[7], nullptr, 0);
   int t1_join_column_index;
   int t2_join_column_index;
@@ -95,15 +97,23 @@ int main(int argc, char *argv[])
     }
   }
 
+//  std::cout << "SEGCHECK 2" << std::endl;
+
   for (int i = 1; i < t1_data.ydim; i++) {
     int key = t1_data.arr[i * t1_data.xdim + t1_join_column_index];
     struct buffer new_buf;
     new_buf.key = key;
     new_buf.rid = i;
+//    std::cout << "SEGCHECK 2.0.1" << std::endl;
     new_buf.hash0 = hash_function(0, key);
+  //  std::cout << "SEGCHECK 2.0.2" << std::endl;
     new_buf.hash1 = hash_function(1, key);
+    //std::cout << "SEGCHECK 2.0.3" << std::endl;
     build(new_buf, 0);
+    //std::cout << "SEGCHECK 2.0.4" << std::endl;
   }
+
+//  std::cout << "SEGCHECK 2.1" << std::endl;
 
   for (int i = 1; i < t2_data.ydim; i++) {
     int key = t2_data.arr[i * t2_data.xdim + t2_join_column_index];
@@ -115,9 +125,14 @@ int main(int argc, char *argv[])
     probe(new_buf);
   }
 
+//  std::cout << "SEGCHECK 3" << std::endl;
+
   //print_addr_table();
   //print_hash_table();
   evaluate_hash_table();
+
+//  std::cout << "SEGCHECK 4" << std::endl;
+
   return 0;
 #else
   int testing = 42069;

@@ -20,6 +20,10 @@ int hash_function(int function, int key) {
     //case 0: return key % R;
     //case 1: return key % R;
 
+    // modulo_div
+    //case 0: return key % R;
+    //case 1: return (key / R) % R;
+
     // div_modulo
     //case 0: return (key / R) % R;
     //case 1: return key % R;

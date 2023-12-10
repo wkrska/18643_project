@@ -1,6 +1,6 @@
 #include <iostream>
 #include <climits>
-#define R 16 // number of rows in a hash table
+#define R 128 // number of rows in a hash table
 #define C 2000  // number of slots in a row
 #define MAX 2000 // max number of time of hashing, for cycle detection
 #define SIZE 2000
